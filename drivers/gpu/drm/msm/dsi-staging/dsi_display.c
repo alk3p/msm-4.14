@@ -7261,6 +7261,7 @@ static inline bool dsi_display_mode_switch_dfps(struct dsi_display_mode *cur,
  */
 u32 mode_fps = 90;
 EXPORT_SYMBOL(mode_fps);
+extern void ts_switch_poll_rate(bool is_90);
 int dsi_display_validate_mode_change(struct dsi_display *display,
 			struct dsi_display_mode *cur_mode,
 			struct dsi_display_mode *adj_mode)
@@ -7268,9 +7269,6 @@ int dsi_display_validate_mode_change(struct dsi_display *display,
 	int rc = 0;
 	struct dsi_dfps_capabilities dfps_caps;
 	struct dsi_dyn_clk_caps *dyn_clk_caps;
-
-	struct msm_drm_notifier notifier_data;
-	int dynamic_fps;
 
 	if (!display || !adj_mode) {
 		pr_err("Invalid params\n");
@@ -7292,11 +7290,8 @@ int dsi_display_validate_mode_change(struct dsi_display *display,
 			dsi_panel_get_dfps_caps(display->panel, &dfps_caps);
 			if (mode_fps != adj_mode->timing.refresh_rate) {
 				mode_fps = adj_mode->timing.refresh_rate;
-				dynamic_fps = mode_fps;
-				notifier_data.data = &dynamic_fps;
-				notifier_data.id = MSM_DRM_PRIMARY_DISPLAY;
-				pr_err("set fps: %d, fresh_rate_report_enable : %d\n", dynamic_fps, fresh_rate_report_enable);
-				msm_drm_notifier_call_chain(MSM_DRM_EARLY_EVENT_BLANK, &notifier_data);
+				pr_err("set fps: %d, fresh_rate_report_enable : %d\n", mode_fps, fresh_rate_report_enable);
+				ts_switch_poll_rate(mode_fps == 90 ? true : false);
 				if (fresh_rate_report_enable) {
 					input_event(fresh_rate_input_dev, EV_MSC, MSC_RAW, mode_fps);
 					input_sync(fresh_rate_input_dev);
