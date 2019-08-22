@@ -59,7 +59,10 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 		.vmas = LIST_HEAD_INIT(buffer->vmas),
 		.attachment_lock = __MUTEX_INITIALIZER(buffer->attachment_lock),
 		.kmap_lock = __MUTEX_INITIALIZER(buffer->kmap_lock),
-		.vma_lock = __MUTEX_INITIALIZER(buffer->vma_lock)
+		.vma_lock = __MUTEX_INITIALIZER(buffer->vma_lock),
+		.iommu_data = {
+			.lock = __MUTEX_INITIALIZER(buffer->iommu_data.lock)
+ 		}
 	};
 
 	ret = heap->ops->allocate(heap, buffer, len, flags);
@@ -98,7 +101,7 @@ static void _ion_buffer_destroy(struct ion_buffer *buffer)
 {
 	struct ion_heap *heap = buffer->heap;
 
-	msm_dma_buf_freed(buffer);
+	msm_dma_buf_freed(&buffer->iommu_data);
 
 	if (heap->flags & ION_HEAP_FLAG_DEFER_FREE)
 		ion_heap_freelist_add(heap, buffer);
@@ -185,9 +188,10 @@ struct ion_dma_buf_attachment {
 static int ion_dma_buf_attach(struct dma_buf *dmabuf, struct device *dev,
 				struct dma_buf_attachment *attachment)
 {
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 	struct ion_dma_buf_attachment *a;
 	struct sg_table *table;
-	struct ion_buffer *buffer = dmabuf->priv;
 
 	a = kzalloc(sizeof(*a), GFP_KERNEL);
 	if (!a)
@@ -218,8 +222,9 @@ static int ion_dma_buf_attach(struct dma_buf *dmabuf, struct device *dev,
 static void ion_dma_buf_detach(struct dma_buf *dmabuf,
 				struct dma_buf_attachment *attachment)
 {
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 	struct ion_dma_buf_attachment *a = attachment->priv;
-	struct ion_buffer *buffer = dmabuf->priv;
 
 	if (buffer->flags & ION_FLAG_CACHED) {
 		mutex_lock(&buffer->attachment_lock);
@@ -339,7 +344,8 @@ static const struct vm_operations_struct ion_vma_ops = {
 
 static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 
 	if (!buffer->heap->ops->map_user)
 		return -EINVAL;
@@ -356,14 +362,16 @@ static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 
 static void ion_dma_buf_release(struct dma_buf *dmabuf)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 
 	_ion_buffer_destroy(buffer);
 }
 
 static void *ion_dma_buf_vmap(struct dma_buf *dmabuf)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 
 	if (!buffer->heap->ops->map_kernel)
 		return ERR_PTR(-EINVAL);
@@ -373,7 +381,8 @@ static void *ion_dma_buf_vmap(struct dma_buf *dmabuf)
 
 static void ion_dma_buf_vunmap(struct dma_buf *dmabuf, void *vaddr)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 
 	ion_buffer_kmap_put(buffer);
 }
@@ -485,7 +494,8 @@ static int __ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
 					  enum dma_data_direction direction,
 					  bool sync_only_mapped)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 	struct ion_dma_buf_attachment *a;
 	int ret = 0;
 
@@ -523,7 +533,8 @@ static int __ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
 					enum dma_data_direction direction,
 					bool sync_only_mapped)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 	struct ion_dma_buf_attachment *a;
 	int ret = 0;
 
@@ -586,7 +597,8 @@ static int ion_dma_buf_begin_cpu_access_partial(struct dma_buf *dmabuf,
 						unsigned int offset,
 						unsigned int len)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 	struct ion_dma_buf_attachment *a;
 	int ret = 0;
 
@@ -619,7 +631,8 @@ static int ion_dma_buf_end_cpu_access_partial(struct dma_buf *dmabuf,
 					      unsigned int offset,
 					      unsigned int len)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 	struct ion_dma_buf_attachment *a;
 	int ret = 0;
 
@@ -650,7 +663,8 @@ static int ion_dma_buf_end_cpu_access_partial(struct dma_buf *dmabuf,
 static int ion_dma_buf_get_flags(struct dma_buf *dmabuf,
 				 unsigned long *flags)
 {
-	struct ion_buffer *buffer = dmabuf->priv;
+	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
+						 iommu_data);
 
 	*flags = buffer->flags;
 	return 0;
@@ -709,7 +723,7 @@ struct dma_buf *ion_alloc(size_t len, unsigned int heap_id_mask,
 		.ops = &dma_buf_ops,
 		.flags = O_RDWR,
 		.size = buffer->size,
-		.priv = buffer
+		.priv = &buffer->iommu_data
 	};
 
 	dmabuf = dma_buf_export(&exp_info);
