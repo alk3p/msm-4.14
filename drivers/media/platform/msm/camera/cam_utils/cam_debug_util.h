@@ -87,7 +87,7 @@ const char *cam_get_module_name(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_ERR(__module, fmt, args...)                            \
-	pr_err("CAM_ERR: %s: %s: %d " fmt "\n",                     \
+	pr_debug("CAM_ERR: %s: %s: %d " fmt "\n",                     \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 /*
  * CAM_WARN
@@ -98,7 +98,7 @@ const char *cam_get_module_name(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_WARN(__module, fmt, args...)                           \
-	pr_warn("CAM_WARN: %s: %s: %d " fmt "\n",                     \
+	pr_debug("CAM_WARN: %s: %s: %d " fmt "\n",                     \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 /*
  * CAM_INFO
@@ -109,7 +109,7 @@ const char *cam_get_module_name(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_INFO(__module, fmt, args...)                           \
-	pr_info("CAM_INFO: %s: %s: %d " fmt "\n",                     \
+	pr_debug("CAM_INFO: %s: %s: %d " fmt "\n",                     \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
 /*
@@ -121,7 +121,7 @@ const char *cam_get_module_name(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_INFO_RATE_LIMIT(__module, fmt, args...)                 \
-	pr_err_ratelimited("CAM_INFO: %s: %s: %d " fmt "\n",            \
+	pr_debug_ratelimited("CAM_INFO: %s: %s: %d " fmt "\n",            \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
 /*
@@ -140,7 +140,7 @@ const char *cam_get_module_name(unsigned int module_id);
  * @brief    :  This Macro will print error print logs with ratelimit
  */
 #define CAM_ERR_RATE_LIMIT(__module, fmt, args...)                 \
-	pr_err_ratelimited("CAM_ERR: %s: %s: %d " fmt "\n",            \
+	pr_debug_ratelimited("CAM_ERR: %s: %s: %d " fmt "\n",            \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
 #else /* CAM_DEBUG_LOGGING */
