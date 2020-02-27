@@ -1365,6 +1365,7 @@ struct task_struct {
 	/* Used by LSM modules for access restriction: */
 	void				*security;
 #endif
+	int				top_app;
 
 	/*
 	 * New fields for task_struct should be added above here, so that
