@@ -278,6 +278,11 @@ int sched_boost_handler(struct ctl_table *table, int write,
 	if (ret || !write)
 		goto done;
 
+	if (*data == 3 || *data == -3) {
+		sysctl_sched_boost = sched_boost_type;
+		goto done;
+	}
+
 	if (verify_boost_params(*data))
 		_sched_set_boost(*data);
 	else
