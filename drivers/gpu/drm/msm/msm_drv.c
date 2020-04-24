@@ -39,6 +39,8 @@
 
 #include <linux/of_address.h>
 #include <linux/kthread.h>
+#include <linux/workqueue.h>
+#include <linux/sched.h>
 #include <uapi/linux/sched/types.h>
 #include <drm/drm_of.h>
 #include <soc/qcom/boot_stats.h>
@@ -493,6 +495,64 @@ static int msm_power_enable_wrapper(void *handle, void *client, bool enable)
 	return sde_power_resource_enable(handle, client, enable);
 }
 
+static void msm_idle_work(struct work_struct *work)
+{
+	struct delayed_work *dw = to_delayed_work(work);
+	struct msm_idle *idle = container_of(dw, struct msm_idle, work);
+	unsigned long flags;
+
+	spin_lock_irqsave(&idle->lock, flags);
+	if (!idle->active_mask) {
+		sched_set_boost(-3);
+		idle->boosting_flag = false;
+	}
+	spin_unlock_irqrestore(&idle->lock, flags);
+}
+
+void msm_idle_set_state(struct drm_encoder *encoder, bool active)
+{
+	struct drm_device *ddev = encoder->dev;
+	struct msm_drm_private *priv = ddev->dev_private;
+	struct msm_idle *idle = &priv->idle;
+	unsigned int mask = 1 << drm_encoder_index(encoder);
+	unsigned long flags;
+
+	if (!mask)
+		return;
+
+	spin_lock_irqsave(&idle->lock, flags);
+	if (active) {
+		if (!idle->boosting_flag) {
+			sched_set_boost(3);
+			idle->boosting_flag = true;
+		}
+		idle->active_mask |= mask;
+	} else
+		idle->active_mask &= ~mask;
+	if (!idle->active_mask) {
+		if (idle->timeout_ms) {
+			mod_delayed_work(system_wq, &idle->work,
+				 msecs_to_jiffies(idle->timeout_ms));
+		} else {
+			sched_set_boost(-3);
+			idle->boosting_flag = false;
+		}
+	} else
+		cancel_delayed_work(&idle->work);
+	spin_unlock_irqrestore(&idle->lock, flags);
+}
+
+static void msm_idle_init(struct drm_device *ddev)
+{
+	struct msm_drm_private *priv = ddev->dev_private;
+	struct msm_idle *idle = &priv->idle;
+
+	INIT_DELAYED_WORK(&idle->work, msm_idle_work);
+	spin_lock_init(&idle->lock);
+	// Pixel 4 (Android R DP3) 100ms
+	idle->timeout_ms = 80;
+}
+
 static int msm_drm_init(struct device *dev, struct drm_driver *drv)
 {
 	struct platform_device *pdev = to_platform_device(dev);
@@ -552,6 +612,8 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
 		dev_err(dev, "failed to init sde dbg: %d\n", ret);
 		goto dbg_init_fail;
 	}
+
+	msm_idle_init(ddev);
 
 	/* Bind all our sub-components: */
 	ret = msm_component_bind_all(dev, ddev);
