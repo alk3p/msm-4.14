@@ -196,7 +196,9 @@ static void sched_boost_enable(int type)
 	if (next_boost == prev_boost)
 		return;
 
+#ifdef CONFIG_SCHED_WALT
 	sched_boosts[prev_boost].exit();
+#endif
 	sched_boosts[next_boost].enter();
 }
 
