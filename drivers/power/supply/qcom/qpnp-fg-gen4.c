@@ -4314,14 +4314,28 @@ static int fg_psy_get_property(struct power_supply *psy,
 		pval->intval = chip->cl->init_cap_uah;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
-		rc = fg_gen4_get_learned_capacity(chip, &temp);
-		if (!rc)
-			pval->intval = (int)temp;
+		if (!get_extern_fg_regist_done() && get_extern_bq_present())
+			pval->intval = -EINVAL;
+		else if (fg->use_external_fg && external_fg && external_fg->get_batt_full_chg_capacity)
+			pval->intval = external_fg->get_batt_full_chg_capacity();
+		else {
+			rc = fg_gen4_get_learned_capacity(chip, &temp);
+			if (!rc)
+				pval->intval = (int)temp;
+		}
+		break;
+	case POWER_SUPPLY_PROP_REMAINING_CAPACITY:
+		if (!get_extern_fg_regist_done() && get_extern_bq_present())
+			pval->intval = DEFALUT_BATT_TEMP;
+		else if (fg->use_external_fg && external_fg && external_fg->get_batt_remaining_capacity)
+			pval->intval = external_fg->get_batt_remaining_capacity();
+		else
+			pval->intval = -EINVAL;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
 		rc = fg_gen4_get_nominal_capacity(chip, &temp);
 		if (!rc)
-			pval->intval = (int)temp;
+			pval->intval = -EINVAL;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
 		rc = fg_gen4_get_charge_counter(chip, &pval->intval);
@@ -4583,6 +4597,7 @@ static enum power_supply_property fg_psy_props[] = {
 	POWER_SUPPLY_PROP_SET_ALLOW_READ_EXTERN_FG_IIC,
 	POWER_SUPPLY_PROP_BQ_SOC,
 	POWER_SUPPLY_PROP_BATTERY_HEALTH,
+	POWER_SUPPLY_PROP_REMAINING_CAPACITY,
 };
 
 static const struct power_supply_desc fg_psy_desc = {
