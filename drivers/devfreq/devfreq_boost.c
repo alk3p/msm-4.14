@@ -9,6 +9,7 @@
 #include <linux/msm_drm_notify.h>
 #include <linux/input.h>
 #include <linux/kthread.h>
+#include <linux/sched.h>
 #include <linux/slab.h>
 #include <uapi/linux/sched/types.h>
 
@@ -197,10 +198,12 @@ static int msm_drm_notifier_cb(struct notifier_block *nb, unsigned long action,
 
 		if (*blank == MSM_DRM_BLANK_UNBLANK_CUST) {
 			set_bit(SCREEN_ON, &b->state);
+			disable_schedtune_boost("top-app", false);
 			__devfreq_boost_kick_max(b,
 				CONFIG_DEVFREQ_WAKE_BOOST_DURATION_MS);
 		} else if (*blank == MSM_DRM_BLANK_POWERDOWN_CUST) {
 			clear_bit(SCREEN_ON, &b->state);
+			disable_schedtune_boost("top-app", true);
 			wake_up(&b->boost_waitq);
 		}
 	}
