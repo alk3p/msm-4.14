@@ -963,7 +963,7 @@ static int pl_fcc_vote_callback(struct votable *votable, void *data,
 		return 0;
 
 	if (total_fcc_ua != total_fcc_ua_pre) {
-		pr_info("total_fcc_ua=%d\n", total_fcc_ua);
+		pr_debug("total_fcc_ua=%d\n", total_fcc_ua);
 		total_fcc_ua_pre = total_fcc_ua;
 	}
 
