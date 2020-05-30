@@ -533,7 +533,7 @@ static int msm_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
 	g = &pctrl->soc->groups[offset];
 	base = reassign_pctrl_reg(pctrl->soc, offset);
 
-	val = readl(base + g->ctl_reg);
+	val = readl_relaxed(base + g->ctl_reg);
 
 	/* 0 = output, 1 = input */
 	return val & BIT(g->oe_bit) ? 0 : 1;
@@ -735,13 +735,13 @@ static void msm_gpio_irq_enable(struct irq_data *d)
 	 * any erraneous interrupts that would have got latched
 	 * when the intterupt is not in use.
 	 */
-	val = readl(base + g->intr_status_reg);
+	val = readl_relaxed(base + g->intr_status_reg);
 	val &= ~BIT(g->intr_status_bit);
-	writel(val, base + g->intr_status_reg);
+	writel_relaxed(val, base + g->intr_status_reg);
 
-	val = readl(base + g->intr_cfg_reg);
+	val = readl_relaxed(base + g->intr_cfg_reg);
 	val |= BIT(g->intr_enable_bit);
-	writel(val, base + g->intr_cfg_reg);
+	writel_relaxed(val, base + g->intr_cfg_reg);
 
 	set_bit(d->hwirq, pctrl->enabled_irqs);
 
