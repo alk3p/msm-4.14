@@ -468,7 +468,7 @@ int wlan_cfg80211_sched_scan_start(struct wlan_objmgr_vdev *vdev,
 				if (!ok)
 					continue;
 			}
-			len += qdf_scnprintf(chl + len, buff_len - len, " %d", channel);
+			len += qdf_scnprintf(chl + len, MAX_CHANNEL * 5 + 1 - len, " %d", channel);
 			valid_ch[num_chan++] = wlan_chan_to_freq(channel);
 		}
 		cfg80211_debug("Channel-List[%d]:%s", num_chan, chl);
