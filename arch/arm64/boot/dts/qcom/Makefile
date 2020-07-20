@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0
+ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY_QCOM),y)
 dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
@@ -77,6 +78,90 @@ sm8150-sdx50m-mtp-2.5k-panel-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm815
 sm8150-sdx50m-qrd-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
 sm8150-sdxprairie-cdp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
 sm8150-sdxprairie-mtp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+endif
+endif
+
+ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
+	dtbo-$(CONFIG_ARCH_SM8150) += \
+		sm8150-mtp-overlay.dtbo \
+		sm8150-sdxprairie-mtp-overlay.dtbo \
+		guacamole-overlay-t0.dtbo \
+		guacamole-overlay-evt1.dtbo \
+		guacamole-overlay-evt2.dtbo \
+		guacamole-overlay-evt2-second.dtbo \
+		guacamole-overlay-evt3.dtbo \
+		guacamole-overlay-dvt.dtbo \
+		guacamole-overlay-pvt.dtbo \
+		guacamoleb-overlay-t0.dtbo \
+		guacamoleb-overlay-evt.dtbo \
+		guacamoleb-overlay-dvt.dtbo \
+		guacamoleb-overlay-pvt.dtbo \
+		sm8150-sdx50m-mtp-overlay.dtbo \
+		guacamole-sdx50m-overlay-t0.dtbo \
+		guacamole-sdx50m-overlay-evt1.dtbo \
+		guacamole-sdx50m-overlay-evt2.dtbo \
+		guacamole-sdx50m-overlay-dvt.dtbo \
+		guacamole-sdx50m-overlay-pvt.dtbo \
+		guacamoles-sdx50m-overlay-t0.dtbo \
+		guacamoles-sdx50m-overlay-evt.dtbo \
+		guacamoles-sdx50m-overlay-dvt.dtbo \
+		guacamoles-sdx50m-overlay-pvt.dtbo \
+		hotdogb-overlay-t0.dtbo \
+		hotdogb-overlay-evt.dtbo \
+		hotdogb-overlay-evt-second.dtbo \
+		hotdogb-overlay-dvt.dtbo \
+		hotdogb-overlay-dvt-second.dtbo \
+		hotdogb-overlay-pvt.dtbo \
+		hotdogb-overlay-pvt-second.dtbo \
+		hotdog-overlay-t0.dtbo \
+		hotdog-overlay-evt.dtbo \
+		hotdog-overlay-dvt.dtbo \
+		hotdog-overlay-pvt.dtbo \
+		hotdogg-sdx55m-overlay-t0.dtbo \
+		hotdogg-sdx55m-overlay-evt1.dtbo \
+		hotdogg-sdx55m-overlay-evt2.dtbo \
+		hotdogg-sdx55m-overlay-dvt.dtbo \
+		hotdogg-sdx55m-overlay-pvt.dtbo
+
+sm8150-mtp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+sm8150-sdxprairie-mtp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-evt1.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-evt2.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-evt2-second.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-evt3.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoleb-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoleb-overlay-evt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoleb-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoleb-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+sm8150-sdx50m-mtp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-sdx50m-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-sdx50m-overlay-evt1.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-sdx50m-overlay-evt2.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-sdx50m-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamole-sdx50m-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoles-sdx50m-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoles-sdx50m-overlay-evt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoles-sdx50m-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+guacamoles-sdx50m-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdog-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdog-overlay-evt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdog-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdog-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogg-sdx55m-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogg-sdx55m-overlay-evt1.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogg-sdx55m-overlay-evt2.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogg-sdx55m-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogg-sdx55m-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-t0.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-evt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-evt-second.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-dvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-dvt-second.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-pvt.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
+hotdogb-overlay-pvt-second.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
 sm8150-sdxprairie-v2-cdp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
 sm8150-sdxprairie-v2-mtp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb
 sm8150-sdxprairie-v3-mtp-overlay.dtbo-base := sm8150.dtb sm8150-v2.dtb sm8150p.dtb sm8150p-v2.dtb

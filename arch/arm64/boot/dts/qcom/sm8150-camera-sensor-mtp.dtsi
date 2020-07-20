@@ -55,6 +55,73 @@
 		switch-source = <&pm8150l_switch0>;
 		status = "ok";
 	};
+
+	led_flash_triple_rear: qcom,camera-flash@4 {
+		cell-index = <4>;
+		reg = <0x04 0x00>;
+		compatible = "qcom,camera-flash";
+		flash-source = <&pm8150l_flash0 &pm8150l_flash1>;
+		torch-source = <&pm8150l_torch0 &pm8150l_torch1>;
+		switch-source = <&pm8150l_switch2>;
+		status = "ok";
+	};
+
+	led_flash_triple_rear_aux: qcom,camera-flash@5 {
+		cell-index = <5>;
+		reg = <0x05 0x00>;
+		compatible = "qcom,camera-flash";
+		flash-source = <&pm8150l_flash0 &pm8150l_flash1>;
+		torch-source = <&pm8150l_torch0 &pm8150l_torch1>;
+		switch-source = <&pm8150l_switch2>;
+		status = "ok";
+	};
+
+	led_flash_triple_rear_aux2: qcom,camera-flash@6 {
+		cell-index = <6>;
+		reg = <0x06 0x00>;
+		compatible = "qcom,camera-flash";
+		flash-source = <&pm8150l_flash0 &pm8150l_flash1>;
+		torch-source = <&pm8150l_torch0 &pm8150l_torch1>;
+		switch-source = <&pm8150l_switch2>;
+		status = "ok";
+	};
+
+	actuator_triple_rear_regulator: gpio-regulator@4 {
+		compatible = "regulator-fixed";
+		reg = <0x04 0x00>;
+		regulator-name = "actuator_triple_rear_regulator";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-enable-ramp-delay = <135>;
+		enable-active-high;
+		gpio = <&tlmm 158 0>;
+		vin-supply = <&pm8150l_bob>;
+	};
+
+	actuator_triple_rear_aux_regulator: gpio-regulator@5 {
+		compatible = "regulator-fixed";
+		reg = <0x05 0x00>;
+		regulator-name = "actuator_triple_rear_aux_regulator";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-enable-ramp-delay = <135>;
+		enable-active-high;
+		gpio = <&tlmm 160 0>;
+		vin-supply = <&pm8150l_bob>;
+	};
+
+	actuator_triple_rear_aux2_regulator: gpio-regulator@6 {
+		compatible = "regulator-fixed";
+		status = "disable";
+		reg = <0x06 0x00>;
+		regulator-name = "actuator_triple_rear_aux2_regulator";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-enable-ramp-delay = <135>;
+		enable-active-high;
+		gpio = <&tlmm 24 0>;
+		vin-supply = <&pm8150l_bob>;
+	};
 };
 
 &cam_cci0 {
