@@ -223,6 +223,8 @@ source "drivers/esoc/Kconfig"
 
 source "drivers/oneplus/Kconfig"
 
+source "drivers/step_motor/Kconfig"
+
 source "techpack/data/drivers/Kconfig"
 
 endmenu
