@@ -428,7 +428,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -std=gnu89
 
 # Optimization flag for sm8150
-KBUILD_CFLAGS	+= -mcpu=cortex-a76.cortex-a55+crc+crypto
+KBUILD_CFLAGS	+= -mcpu=cortex-a76.cortex-a55+crc+crypto -Werror=vla
 
 # Opt-out 835769/843419 erratum fixes.
 KBUILD_CFLAGS	+= $(call cc-option, -mno-fix-cortex-a53-835769)
