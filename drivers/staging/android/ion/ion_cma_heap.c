@@ -112,8 +112,7 @@ static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
 			}
 		}
 
-		if (MAKE_ION_ALLOC_DMA_READY ||
-		    (flags & ION_FLAG_SECURE) ||
+		if ((flags & ION_FLAG_SECURE) ||
 		    !ion_buffer_cached(buffer))
 			ion_pages_sync_for_device(dev, pages, size,
 						  DMA_BIDIRECTIONAL);
@@ -138,7 +137,7 @@ free_table:
 	kfree(table);
 err_alloc:
 	if (info->cpu_addr)
-		dma_free_attrs(dev, size, info->cpu_addr, info->handle, 0);
+		dma_free_writecombine(dev, size, info->cpu_addr, info->handle);
 	else
 		cma_release(cma_heap->cma, pages, nr_pages);
 
