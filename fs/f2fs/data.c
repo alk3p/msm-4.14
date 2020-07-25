@@ -1864,6 +1864,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
 	sector_t last_block_in_file;
 	sector_t block_nr;
 	int ret = 0;
+	bool bio_encrypted;
+	u64 dun;
 
 	block_in_file = (sector_t)page_index(page);
 	last_block = block_in_file + nr_pages;
@@ -1928,6 +1930,14 @@ submit_and_realloc:
 		__submit_bio(F2FS_I_SB(inode), bio, DATA);
 		bio = NULL;
 	}
+
+	dun = PG_DUN(inode, page);
+	bio_encrypted = f2fs_may_encrypt_bio(inode, NULL);
+	if (!fscrypt_mergeable_bio(bio, dun, bio_encrypted, 0)) {
+		__submit_bio(F2FS_I_SB(inode), bio, DATA);
+		bio = NULL;
+	}
+
 	if (bio == NULL) {
 		bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
 				is_readahead ? REQ_RAHEAD : 0, false);
@@ -1936,6 +1946,8 @@ submit_and_realloc:
 			bio = NULL;
 			goto out;
 		}
+		if (bio_encrypted)
+			fscrypt_set_ice_dun(inode, bio, dun);
 	}
 
 	/*
@@ -2270,6 +2282,9 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
 	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
 
 retry_encrypt:
+	if (fscrypt_using_hardware_encryption(inode))
+		return 0;
+
 	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(page,
 					PAGE_SIZE, 0, gfp_flags);
 	if (IS_ERR(fio->encrypted_page)) {
@@ -3755,7 +3770,9 @@ void f2fs_clear_radix_tree_dirty_tag(struct page *page)
 
 int __init f2fs_init_post_read_processing(void)
 {
-	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
+	bio_post_read_ctx_cache =
+		kmem_cache_create("f2fs_bio_post_read_ctx",
+				  sizeof(struct bio_post_read_ctx), 0, 0, NULL);
 	if (!bio_post_read_ctx_cache)
 		goto fail;
 	bio_post_read_ctx_pool =
