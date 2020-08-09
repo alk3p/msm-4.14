@@ -191,5 +191,6 @@ obj-$(CONFIG_ESOC)              += esoc/
 obj-y                           += oneplus/
 obj-y  += step_motor/
 obj-$(CONFIG_TRI_STATE_KEY)     += tri_state_key/
+obj-$(CONFIG_AW8697_HAPTIC)     += vibrator/
 # GNSS driver
 obj-$(CONFIG_GNSS_SIRF)		+= gnsssirf/
