@@ -1,4 +1,4 @@
-/* Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -17,15 +17,15 @@
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM camera
 #undef TRACE_INCLUDE_PATH
-#define TRACE_INCLUDE_PATH ../drivers/media/platform/msm/camera/cam_utils
+#define TRACE_INCLUDE_PATH .
 #undef TRACE_INCLUDE_FILE
 #define TRACE_INCLUDE_FILE cam_trace
 
 #include <linux/tracepoint.h>
 #include <media/cam_req_mgr.h>
-#include "../cam_req_mgr/cam_req_mgr_core.h"
-#include "../cam_req_mgr/cam_req_mgr_interface.h"
-#include "../cam_core/cam_context.h"
+#include "cam_req_mgr_core.h"
+#include "cam_req_mgr_interface.h"
+#include "cam_context.h"
 
 TRACE_EVENT(cam_context_state,
 	TP_PROTO(const char *name, struct cam_context *ctx),
@@ -283,34 +283,6 @@ TRACE_EVENT(cam_irq_handled,
 	TP_printk(
 		"%8s: handled irq type=%d",
 			__get_str(entity), __entry->irq_type
-	)
-);
-
-TRACE_EVENT(cam_isp_irq_delay_detect,
-	TP_PROTO(const char *text, struct cam_context *ctx,
-		uint64_t request_id, uint32_t substate,
-		uint64_t timestamp),
-	TP_ARGS(text, ctx, request_id, substate, timestamp),
-	TP_STRUCT__entry(
-		__string(text, text)
-		__field(uint32_t, ctx_id)
-		__field(uint64_t, dev_id)
-		__field(uint64_t, req_id)
-		__field(uint32_t, substate)
-		__field(uint64_t, ts)
-	),
-	TP_fast_assign(
-		__assign_str(text, text);
-		__entry->ctx_id = ctx->ctx_id;
-		__entry->dev_id = ctx->dev_id;
-		__entry->req_id = request_id;
-		__entry->substate = substate;
-		__entry->ts = timestamp;
-	),
-	TP_printk(
-		"ISP: %s ctx=%u dev_id=%u req_id=%lld substate=%u event=%u delay_by=%llu",
-			__get_str(text), __entry->ctx_id, __entry->dev_id,
-			__entry->req_id, __entry->substate, __entry->ts
 	)
 );
 
