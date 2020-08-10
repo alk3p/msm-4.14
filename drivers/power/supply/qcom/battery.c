@@ -201,8 +201,7 @@ static int get_hvdcp3_icl_limit(struct pl_data *chip)
 {
 	int main_icl, target_icl = -EINVAL;
 
-	if ((chip->charger_type != POWER_SUPPLY_TYPE_USB_HVDCP_3)
-		&& (chip->charger_type != POWER_SUPPLY_TYPE_USB_HVDCP_3P5))
+	if (chip->charger_type != POWER_SUPPLY_TYPE_USB_HVDCP_3)
 		return target_icl;
 
 	/*
