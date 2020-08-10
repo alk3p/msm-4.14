@@ -198,7 +198,7 @@ journal_err_out:
 	return err;
 }
 
-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+#ifdef CONFIG_FS_ENCRYPTION
 static int uuid_is_zero(__u8 u[16])
 {
 	int	i;
@@ -242,6 +242,7 @@ static int ext4_ioctl_setflags(struct inode *inode,
 	struct ext4_iloc iloc;
 	unsigned int oldflags, mask, i;
 	unsigned int jflag;
+	struct super_block *sb = inode->i_sb;
 
 	/* Is it quota file? Do not allow user to mess with it */
 	if (ext4_is_quota_file(inode))
@@ -286,18 +287,21 @@ static int ext4_ioctl_setflags(struct inode *inode,
 			goto flags_out;
 	}
 
-	/*
-	 * Wait for all pending directio and then flush all the dirty pages
-	 * for this file.  The flush marks all the pages readonly, so any
-	 * subsequent attempt to write to the file (particularly mmap pages)
-	 * will come through the filesystem and fail.
-	 */
-	if (S_ISREG(inode->i_mode) && !IS_IMMUTABLE(inode) &&
-	    (flags & EXT4_IMMUTABLE_FL)) {
-		inode_dio_wait(inode);
-		err = filemap_write_and_wait(inode->i_mapping);
-		if (err)
+	if ((flags ^ oldflags) & EXT4_CASEFOLD_FL) {
+		if (!ext4_has_feature_casefold(sb)) {
+			err = -EOPNOTSUPP;
 			goto flags_out;
+		}
+
+		if (!S_ISDIR(inode->i_mode)) {
+			err = -ENOTDIR;
+			goto flags_out;
+		}
+
+		if (!ext4_empty_dir(inode)) {
+			err = -ENOTEMPTY;
+			goto flags_out;
+		}
 	}
 
 	handle = ext4_journal_start(inode, EXT4_HT_INODE, 1);
@@ -1013,7 +1017,7 @@ resizefs_out:
 		return fscrypt_ioctl_set_policy(filp, (const void __user *)arg);
 
 	case EXT4_IOC_GET_ENCRYPTION_PWSALT: {
-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+#ifdef CONFIG_FS_ENCRYPTION
 		int err, err2;
 		struct ext4_sb_info *sbi = EXT4_SB(sb);
 		handle_t *handle;
