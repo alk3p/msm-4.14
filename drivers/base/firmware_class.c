@@ -380,11 +380,13 @@ static void fw_free_buf(struct firmware_buf *buf)
 
 /* direct firmware loading support */
 static char fw_path_para[256];
+static const char * const sub_updates = "/lib/firmware/updates/" UTS_RELEASE;
+static const char * const sub_firmware = "/lib/firmware/" UTS_RELEASE;
 static const char * const fw_path[] = {
 	fw_path_para,
-	"/lib/firmware/updates/" UTS_RELEASE,
+	sub_updates,
 	"/lib/firmware/updates",
-	"/lib/firmware/" UTS_RELEASE,
+	sub_firmware,
 	"/lib/firmware"
 };
 
