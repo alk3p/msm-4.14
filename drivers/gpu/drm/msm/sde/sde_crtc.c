@@ -3406,6 +3406,7 @@ int bl_to_alpha_dc(int brightness)
 }
 
 extern int op_dimlayer_bl_enable;
+extern int is_fod;
 int oneplus_get_panel_brightness_to_alpha(void)
 {
 	struct dsi_display *display = get_main_display();
@@ -3414,7 +3415,7 @@ int oneplus_get_panel_brightness_to_alpha(void)
 		return 0;
 	if (oneplus_panel_alpha)
 		return oneplus_panel_alpha;
-    if (!op_dimlayer_bl_enable || display->panel->dim_status)
+    if ((!op_dimlayer_bl_enable && is_fod) || display->panel->dim_status)
 		return brightness_to_alpha(display->panel->hbm_backlight);
     else
 		return bl_to_alpha_dc(display->panel->hbm_backlight);
@@ -5908,6 +5909,9 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 	if (fp_index < 0 && !dim_backlight) {
 		cstate->fingerprint_dim_layer = NULL;
 	}
+
+	if (!is_fod)
+		return 0;
 
 	if (fp_mode == 1) {
 		display->panel->dim_status = true;
