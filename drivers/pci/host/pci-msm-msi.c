@@ -91,13 +91,11 @@ struct msm_msi_client {
 	dma_addr_t msi_addr;
 };
 
-static bool msm_msi_snps_handler(struct irq_desc *desc)
+static void msm_msi_snps_handler(struct irq_desc *desc)
 {
 	struct irq_chip *chip = irq_desc_get_chip(desc);
 	struct msm_msi_grp *msi_grp;
 	int i;
-	int res;
-	int handled = 0;
 	u32 status, mask;
 
 	chained_irq_enter(chip, desc);
@@ -115,31 +113,26 @@ static bool msm_msi_snps_handler(struct irq_desc *desc)
 	writel_relaxed(status, msi_grp->int_status_reg);
 
 	for (i = 0; status; i++, status >>= 1)
-		if (status & 0x1) {
-			res = generic_handle_irq(msi_grp->irqs[i].virq);
-			handled += (res == 1);
-		}
+		if (status & 0x1)
+			generic_handle_irq(msi_grp->irqs[i].virq);
 
 	chained_irq_exit(chip, desc);
-	return (handled != 0);
 }
 
-static bool msm_msi_qgic_handler(struct irq_desc *desc)
+static void msm_msi_qgic_handler(struct irq_desc *desc)
 {
 	struct irq_chip *chip = irq_desc_get_chip(desc);
 	struct msm_msi *msi;
 	unsigned int virq;
-	int handled;
 
 	chained_irq_enter(chip, desc);
 
 	msi = irq_desc_get_handler_data(desc);
 	virq = irq_find_mapping(msi->inner_domain, irq_desc_get_irq(desc));
 
-	handled = generic_handle_irq(virq);
+	generic_handle_irq(virq);
 
 	chained_irq_exit(chip, desc);
-	return (handled == 1);
 }
 
 static void msm_msi_snps_mask_irq(struct irq_data *data)
