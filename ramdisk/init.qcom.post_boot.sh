@@ -207,4 +207,6 @@ echo 10 > /proc/sys/vm/dirty_background_ratio
 echo 3000 > /proc/sys/vm/dirty_expire_centisecs
 echo 0 > /proc/sys/vm/page-cluster
 
+touch /dev/.execprog_finished
+
 exit 0
