@@ -3386,7 +3386,7 @@ int bl_to_alpha_dc(int brightness)
 }
 
 extern int op_dimlayer_bl_enable;
-extern int is_fod;
+extern unsigned int is_fod;
 int oneplus_get_panel_brightness_to_alpha(void)
 {
 	struct dsi_display *display = get_main_display();

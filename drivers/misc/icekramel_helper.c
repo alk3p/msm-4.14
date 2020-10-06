@@ -1,9 +1,9 @@
 #include <linux/module.h>
 
-int is_fod;
+unsigned int is_fod;
 
 MODULE_PARM_DESC(is_fod, "Activate FOD fix");
-module_param_named(is_fod, is_fod, int, 0644);
+module_param_named(is_fod, is_fod, uint, 0644);
 
 unsigned int remove_op_capacity;
 
