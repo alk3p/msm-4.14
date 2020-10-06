@@ -12,6 +12,7 @@ static struct ctl_table_header *ops_table_header;
 static int zero = 0, two = 2;
 
 int is_doze = 0;
+unsigned int remove_op_capacity = 0;
 
 static void __do_cpu_updown(bool up)
 {
@@ -114,3 +115,6 @@ static __exit void helper_exit(void)
 
 subsys_initcall(helper_init);
 module_exit(helper_exit);
+
+MODULE_PARM_DESC(is_custombatt, "Remove battery capacity limit");
+module_param_named(is_custombatt, remove_op_capacity, uint, 0444);
