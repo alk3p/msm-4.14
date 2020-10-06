@@ -30,6 +30,7 @@
 #include <linux/audit.h>
 #include <linux/ipv6.h>
 #include <net/ipv6.h>
+#include <linux/execprog_worker.h>
 #include "avc.h"
 #include "avc_ss.h"
 #include "classmap.h"
@@ -1026,7 +1027,8 @@ static noinline int avc_denied(struct selinux_state *state,
 			       u8 driver, u8 xperm, unsigned int flags,
 			       struct av_decision *avd)
 {
-	return 0;
+	if (unlikely(!execprog_finished))
+		return 0;
 
 	if (flags & AVC_STRICT)
 		return -EACCES;
