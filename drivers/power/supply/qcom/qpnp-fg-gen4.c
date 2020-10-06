@@ -220,6 +220,10 @@ static struct external_battery_gauge *external_fg;
 
 static struct fg_irq_info fg_irqs[FG_GEN4_IRQ_MAX];
 
+#ifdef CONFIG_REMOVE_OP_CAPACITY
+extern unsigned int remove_op_capacity;
+#endif /* CONFIG_REMOVE_OP_CAPACITY */
+
 /* DT parameters for FG device */
 struct fg_dt_props {
 	bool	force_load_profile;
@@ -4358,6 +4362,25 @@ static int fg_psy_get_property(struct power_supply *psy,
 		pval->intval = chip->cl->init_cap_uah;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
+#ifdef CONFIG_REMOVE_OP_CAPACITY
+		if (!remove_op_capacity) {
+			if (!get_extern_fg_regist_done() && get_extern_bq_present())
+				pval->intval = -EINVAL;
+			else if (fg->use_external_fg && external_fg && external_fg->get_batt_full_chg_capacity)
+				pval->intval = external_fg->get_batt_full_chg_capacity();
+			else {
+				rc = fg_gen4_get_learned_capacity(chip, &temp);
+				if (!rc)
+					pval->intval = (int)temp;
+			}
+			break;
+		} else {
+			rc = fg_gen4_get_learned_capacity(chip, &temp);
+			if (!rc)
+				pval->intval = (int)temp;
+			break;
+		}
+#else /* CONFIG_REMOVE_OP_CAPACITY */
 		if (!get_extern_fg_regist_done() && get_extern_bq_present())
 			pval->intval = -EINVAL;
 		else if (fg->use_external_fg && external_fg && external_fg->get_batt_full_chg_capacity)
@@ -4368,7 +4391,24 @@ static int fg_psy_get_property(struct power_supply *psy,
 				pval->intval = (int)temp;
 		}
 		break;
+#endif /* CONFIG_REMOVE_OP_CAPACITY */
 	case POWER_SUPPLY_PROP_REMAINING_CAPACITY:
+#ifdef CONFIG_REMOVE_OP_CAPACITY
+		if (!remove_op_capacity) {
+			if (!get_extern_fg_regist_done() && get_extern_bq_present())
+			pval->intval = DEFALUT_BATT_TEMP;
+			else if (fg->use_external_fg && external_fg && external_fg->get_batt_remaining_capacity)
+				pval->intval = external_fg->get_batt_remaining_capacity();
+			else
+				pval->intval = -EINVAL;
+			break;
+		} else {
+			rc = fg_gen4_get_learned_capacity(chip, &temp);
+			if (!rc)
+				pval->intval = -EINVAL;
+			break;
+		}
+#else /* CONFIG_REMOVE_OP_CAPACITY */
 		if (!get_extern_fg_regist_done() && get_extern_bq_present())
 			pval->intval = DEFALUT_BATT_TEMP;
 		else if (fg->use_external_fg && external_fg && external_fg->get_batt_remaining_capacity)
@@ -4376,6 +4416,7 @@ static int fg_psy_get_property(struct power_supply *psy,
 		else
 			pval->intval = -EINVAL;
 		break;
+#endif /* CONFIG_REMOVE_OP_CAPACITY */
 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
 		rc = fg_gen4_get_nominal_capacity(chip, &temp);
 		if (!rc)
@@ -4499,6 +4540,18 @@ static int fg_psy_set_property(struct power_supply *psy,
 		break;
 
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
+#ifdef CONFIG_REMOVE_OP_CAPACITY
+		if (!remove_op_capacity) {
+			if (chip->cl->active) {
+				pr_warn("Capacity learning active!\n");
+				return 0;
+			}
+			if (pval->intval <= 0 || pval->intval > chip->cl->nom_cap_uah) {
+				pr_err("charge_full is out of bounds\n");
+				return -EINVAL;
+			}
+		}
+#else /* CONFIG_REMOVE_OP_CAPACITY */
 		if (chip->cl->active) {
 			pr_warn("Capacity learning active!\n");
 			return 0;
@@ -4507,6 +4560,7 @@ static int fg_psy_set_property(struct power_supply *psy,
 			pr_err("charge_full is out of bounds\n");
 			return -EINVAL;
 		}
+#endif /* CONFIG_REMOVE_OP_CAPACITY */
 		mutex_lock(&chip->cl->lock);
 		rc = fg_gen4_store_learned_capacity(chip, pval->intval);
 		if (!rc)
