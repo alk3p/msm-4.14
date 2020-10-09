@@ -69,7 +69,7 @@ static void execprog_worker(struct work_struct *work)
 	loff_t off = 0;
 	u32 pos = 0;
 	u32 diff;
-	int ret;
+	int ret, i = 0;
 
 	pr_info("worker started\n");
 
@@ -103,12 +103,15 @@ static void execprog_worker(struct work_struct *work)
 		msleep(10);
 
 		ret = call_usermodehelper(argv[0], argv, NULL, UMH_WAIT_EXEC);
-	} while (ret == -ETXTBSY);
-
-	if (ret)
-		pr_err("execution failed with return code: %d\n", ret);
-	else
-		pr_info("execution finished\n");
+		/*
+		 * With APEX, a -ENOENT might be returned since libc.so is missing.
+		 */
+		if (ret)
+			pr_err("execution failed with return code: %d\n", ret);
+		else
+			pr_info("execution finished\n");
+		i++;
+	} while (ret && i <= 100);
 }
 
 static void execprog_holder(struct work_struct *work)
