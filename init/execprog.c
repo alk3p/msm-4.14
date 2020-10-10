@@ -21,7 +21,6 @@
 #include <linux/rcutree.h>
 #include <linux/string.h>
 #include <linux/vmalloc.h>
-#include <linux/execprog_worker.h>
 
 #include "execprog.h"
 
@@ -34,12 +33,10 @@
 
 // Do we really need these to be configurable?
 #define DELAY_MS 100
-#define EXEC_END "/dev/.execprog_finished"
 #define SAVE_DST CONFIG_EXECPROG_DST
 #define WAIT_FOR CONFIG_EXECPROG_WAIT_FOR
 
 static struct delayed_work execprog_work;
-static struct delayed_work execprog_finish;
 static unsigned char* data;
 static u32 size;
 
@@ -58,8 +55,6 @@ static struct file *file_open(const char *path, int flags, umode_t rights)
 
 	return filp;
 }
-
-unsigned int execprog_finished = 0;
 
 static void execprog_worker(struct work_struct *work)
 {
@@ -111,16 +106,6 @@ static void execprog_worker(struct work_struct *work)
 		pr_info("execution finished\n");
 }
 
-static void execprog_holder(struct work_struct *work)
-{
-    struct path path;
-
-	while (kern_path(EXEC_END, LOOKUP_FOLLOW, &path))
-		msleep(10);
-
-	execprog_finished = 1;
-}
-
 static int __init execprog_init(void)
 {
 	int i;
@@ -142,16 +127,11 @@ static int __init execprog_init(void)
 	queue_delayed_work(system_freezable_power_efficient_wq,
 			&execprog_work, DELAY_MS);
 
-	INIT_DELAYED_WORK(&execprog_finish, execprog_holder);
-	queue_delayed_work(system_freezable_power_efficient_wq,
-			&execprog_finish, DELAY_MS);
-
 	return 0;
 }
 
 static void __exit execprog_exit(void)
 {
-	execprog_finished = 1;
 	return;
 }
 
