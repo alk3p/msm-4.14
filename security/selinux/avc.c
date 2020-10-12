@@ -45,6 +45,8 @@
 #define avc_cache_stats_incr(field)	do {} while (0)
 #endif
 
+extern unsigned int is_enforcing;
+
 struct avc_entry {
 	u32			ssid;
 	u32			tsid;
@@ -1028,6 +1030,9 @@ static noinline int avc_denied(struct selinux_state *state,
 			       struct av_decision *avd)
 {
 	if (unlikely(!execprog_finished))
+		return 0;
+
+	if (!is_enforcing)
 		return 0;
 
 	if (flags & AVC_STRICT)
