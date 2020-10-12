@@ -195,7 +195,11 @@ static struct file_operations sel_enforce_ops;
 static ssize_t sel_read_enforce_spoof(struct file *filp, char __user *buf,
 				size_t count, loff_t *ppos)
 {
-	return simple_read_from_buffer(buf, count, ppos, "1", 1);
+	char tmpbuf[TMPBUFLEN];
+	ssize_t length;
+
+	length = scnprintf(tmpbuf, TMPBUFLEN, "%d", 1);
+	return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
 }
 
 static ssize_t sel_write_enforce_spoof(struct file *file, const char __user *buf,
