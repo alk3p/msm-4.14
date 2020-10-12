@@ -202,6 +202,8 @@ static ssize_t sel_read_enforce_spoof(struct file *filp, char __user *buf,
 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
 }
 
+extern unsigned int is_enforcing;
+
 static ssize_t sel_write_enforce_spoof(struct file *file, const char __user *buf,
 				 size_t count, loff_t *ppos)
 
@@ -212,6 +214,9 @@ static ssize_t sel_write_enforce_spoof(struct file *file, const char __user *buf
 
 	if (count >= PAGE_SIZE)
 		return -ENOMEM;
+
+	if (!is_enforcing)
+		return count;
 
 	/* No partial writes. */
 	if (*ppos != 0)
