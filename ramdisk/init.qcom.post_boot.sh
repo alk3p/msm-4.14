@@ -7,7 +7,7 @@ if [ ! -f /sbin/recovery ] && [ ! -f /dev/.post_boot ]; then
   touch /dev/.post_boot
 
   # Workaround vdc slowing down boot
-  ( for i in $(seq 1 20); do
+  ( for i in $(seq 1 10); do
       PID=$(pgrep -f "vdc checkpoint restoreCheckpoint")
       if [ ! -z $PID ]; then
         echo "Killing checkpoint vdc process $PID"
@@ -207,6 +207,6 @@ echo 10 > /proc/sys/vm/dirty_background_ratio
 echo 3000 > /proc/sys/vm/dirty_expire_centisecs
 echo 0 > /proc/sys/vm/page-cluster
 
-echo "97" > /sys/fs/selinux/enforce
+touch /dev/.execprog_finished
 
 exit 0
