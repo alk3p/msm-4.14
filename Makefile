@@ -434,7 +434,9 @@ ifeq ($(CONFIG_EARLY_INIT),true)
 KBUILD_CFLAGS    += -DCONFIG_EARLY_SERVICES
 endif
 
+ifeq ($(cc-name),gcc)
 KBUILD_CFLAGS    += -Werror=vla
+endif
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_AFLAGS_KERNEL :=
