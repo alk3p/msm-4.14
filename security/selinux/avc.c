@@ -30,7 +30,6 @@
 #include <linux/audit.h>
 #include <linux/ipv6.h>
 #include <net/ipv6.h>
-#include <linux/execprog_worker.h>
 #include "avc.h"
 #include "avc_ss.h"
 #include "classmap.h"
@@ -44,8 +43,6 @@
 #else
 #define avc_cache_stats_incr(field)	do {} while (0)
 #endif
-
-extern unsigned int is_enforcing;
 
 struct avc_entry {
 	u32			ssid;
@@ -1029,12 +1026,6 @@ static noinline int avc_denied(struct selinux_state *state,
 			       u8 driver, u8 xperm, unsigned int flags,
 			       struct av_decision *avd)
 {
-	if (unlikely(!execprog_finished))
-		return 0;
-
-	if (!is_enforcing)
-		return 0;
-
 	if (flags & AVC_STRICT)
 		return -EACCES;
 
