@@ -9,12 +9,12 @@
 		thermal-sensors = <&pm8150_adc_tm ADC_AMUX_THM1_PU2>;
 		trips {
 			freq_config1: freq_config1 {
-				temperature = <52000>;
+				temperature = <56000>;
 				hysteresis = <2000>;
 				type = "passive";
 			};
 			freq_config2: freq_config2 {
-				temperature = <54000>;
+				temperature = <58000>;
 				hysteresis = <2000>;
 				type = "passive";
 			};
@@ -90,16 +90,11 @@
 	skin-msm-therm {
 		trips {
 			freq_config3: freq_config3 {
-				temperature = <62000>;
-				hysteresis = <2000>;
-				type = "passive";
-			};
-			freq_config4: freq_config4 {
 				temperature = <64000>;
 				hysteresis = <2000>;
 				type = "passive";
 			};
-			freq_config5: freq_config5 {
+			freq_config4: freq_config4 {
 				temperature = <66000>;
 				hysteresis = <2000>;
 				type = "passive";
@@ -137,13 +132,13 @@
 					<&CPU7 13 13>;/*1497*/
 			};
 			freq_dev6 {
-				trip = <&freq_config4>;
+				trip = <&freq_config3>;
 				cooling-device =
 					<&msm_gpu THERMAL_NO_LIMIT
 						(THERMAL_MAX_LIMIT-3)>;/*499*/
 			};
 			freq_dev7 {
-				trip = <&freq_config5>;
+				trip = <&freq_config4>;
 				cooling-device =
 					<&msm_gpu THERMAL_NO_LIMIT
 						(THERMAL_MAX_LIMIT-2)>;/*427*/
