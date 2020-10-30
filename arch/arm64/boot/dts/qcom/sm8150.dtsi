@@ -2472,7 +2472,7 @@
 		compatible = "qcom,msm-fastrpc-compute";
 		qcom,fastrpc-adsp-audio-pdr;
 		qcom,rpc-latency-us = <235>;
-		qcom,secure-domains = <0x0F>;
+		qcom,secure-domains = <0x0>;
 
 		qcom,msm_fastrpc_compute_cb1 {
 			compatible = "qcom,msm-fastrpc-compute-cb";
