@@ -1258,6 +1258,7 @@ static struct ab8500_prcmu_ranges ab8540_debug_ranges[AB8500_NUM_BANKS] = {
 	},
 };
 
+
 static irqreturn_t ab8500_debug_handler(int irq, void *data)
 {
 	char buf[16];
