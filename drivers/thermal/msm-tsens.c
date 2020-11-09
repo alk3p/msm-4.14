@@ -262,9 +262,7 @@ int tsens_tm_probe(struct platform_device *pdev)
 {
 	struct tsens_device *tmdev = NULL;
 	int rc;
-#ifdef CONFIG_IPC_LOGGING
 	char tsens_name[40];
-#endif
 
 	if (!(pdev->dev.of_node))
 		return -ENODEV;
@@ -289,8 +287,10 @@ int tsens_tm_probe(struct platform_device *pdev)
 		return rc;
 	}
 
+#ifdef CONFIG_IPC_LOGGING
 	snprintf(tsens_name, sizeof(tsens_name), "tsens_wq_%pa",
 		&tmdev->phys_addr_tm);
+#endif
 
 	tmdev->tsens_reinit_work = alloc_workqueue(tsens_name,
 		WQ_HIGHPRI, 0);
