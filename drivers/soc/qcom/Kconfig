@@ -726,7 +726,6 @@ config QCOM_QDSS_BRIDGE
 
 config QTI_RPM_STATS_LOG
 	bool "Qualcomm Technologies RPM Stats Driver"
-	depends on DEBUG_FS
 	default n
 	help
 	  This option enables a driver which reads RPM messages from a shared
@@ -769,7 +768,7 @@ config MSM_AVTIMER
 
 config MSM_PM
 	depends on PM
-	select MSM_IDLE_STATS if DEBUG_FS
+	select MSM_IDLE_STATS
 	select CPU_IDLE_MULTIPLE_DRIVERS
 	bool "Qualcomm Techonolgies Inc (QTI) platform specific PM driver"
 	help
@@ -861,7 +860,7 @@ config MSM_PERFORMANCE
 
 config QMP_DEBUGFS_CLIENT
 	bool "Debugfs Client to communicate with AOP using QMP protocol"
-	depends on DEBUG_FS
+	depends on DEBUG_FS || CONTROL_CENTER
 	default n
 	help
 	  This options enables a driver which allows clients to send messages
