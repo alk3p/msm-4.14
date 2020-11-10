@@ -1608,6 +1608,13 @@ static struct ctl_table vm_table[] = {
 		.extra2		= &max_swappiness,
 	},
 	{
+		.procname	= "swappiness",
+		.data		= &vm_swappiness,
+		.maxlen		= sizeof(vm_swappiness),
+		.mode		= 0444,
+		.proc_handler	= proc_dointvec,
+	},
+	{
 		.procname       = "want_old_faultaround_pte",
 		.data           = &want_old_faultaround_pte,
 		.maxlen         = sizeof(want_old_faultaround_pte),
