@@ -5,6 +5,8 @@
 #include <linux/seq_file.h>
 #include <asm/setup.h>
 
+#include <linux/oneplus/boot_mode.h>
+
 static char new_command_line[COMMAND_LINE_SIZE];
 
 static int cmdline_proc_show(struct seq_file *m, void *v)
@@ -60,7 +62,8 @@ static int __init proc_cmdline_init(void)
 	 * Patch various flags from command line seen by userspace in order to
 	 * pass SafetyNet checks.
 	 */
-	patch_safetynet_flags(new_command_line);
+	if (get_boot_mode() == MSM_BOOT_MODE__NORMAL)
+		patch_safetynet_flags(new_command_line);
 
 	proc_create("cmdline", 0, NULL, &cmdline_proc_fops);
 	return 0;
