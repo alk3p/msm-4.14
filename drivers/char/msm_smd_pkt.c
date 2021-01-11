@@ -45,10 +45,14 @@
  * @queue:      incoming message queue
  * @readq:      wait object for incoming queue
  * @sig_change: flag to indicate serial signal change
+ * @fragmented_read: set from dt node for partial read
  * @dev_name:   /dev/@dev_name for smd_pkt device
  * @ch_name:    smd channel to match to
  * @edge:       smd edge to match to
  * @open_tout:  timeout for open syscall, configurable in sysfs
+ * @rskb:       current skb being read
+ * @rdata:      data pointer in current skb
+ * @rdata_len:  remaining data to be read from skb
  */
 struct smd_pkt_dev {
 
@@ -523,8 +527,7 @@ static unsigned int smd_pkt_poll(struct file *file, poll_table *wait)
 	}
 
 	spin_lock_irqsave(&smd_pkt_devp->queue_lock, flags);
-	if (!skb_queue_empty(&smd_pkt_devp->queue) ||
-				(smd_pkt_devp->rskb != NULL))
+	if (!skb_queue_empty(&smd_pkt_devp->queue) || smd_pkt_devp->rskb)
 		mask |= POLLIN | POLLRDNORM;
 
 	if (smd_pkt_devp->sig_change)
@@ -623,7 +626,7 @@ int smd_pkt_release(struct inode *inode, struct file *file)
 		spin_lock_irqsave(&smd_pkt_devp->queue_lock, flags);
 
 		/* Discard all SKBs */
-		if (smd_pkt_devp->rskb != NULL) {
+		if (smd_pkt_devp->rskb) {
 			kfree_skb(smd_pkt_devp->rskb);
 			smd_pkt_devp->rskb = NULL;
 			smd_pkt_devp->rdata = NULL;
