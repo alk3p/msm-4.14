@@ -388,7 +388,7 @@ int wlfw_cap_send_sync_msg(struct icnss_priv *priv)
 			goto out;
 		}
 
-		icnss_qmi_fatal_err("QMI Capability request rejected, result:%d error:%d\n",
+		icnss_pr_err("QMI Capability request rejected, result:%d error:%d\n",
 			resp->resp.result, resp->resp.error);
 		goto out;
 	}
