@@ -44,10 +44,16 @@ static const char * const power_supply_type_text[] = {
 	"Unknown", "Battery", "UPS", "Mains", "USB",
 	"USB_DCP", "USB_CDP", "USB_ACA", "USB_C",
 	"USB_PD", "USB_PD_DRP", "BrickID",
-	"USB_HVDCP", "USB_HVDCP_3", "USB_HVDCP_3P5", "Wireless", "USB_FLOAT",
-	"BMS", "Parallel", "Main", "Wipower", "USB_C_UFP", "USB_C_DFP",
-	"Charge_Pump",
+	"USB_HVDCP", "USB_HVDCP_3", "Wireless", "USB_FLOAT",
+	"BMS", "Parallel", "Main", "Wipower",
+/* @bsp, 2019/04/17 Battery & Charging porting */
+	"USB_C_UFP", "USB_C_DFP",
+	"Charge_Pump", "DASH",
 };
+/* @bsp, 2019/04/17 Battery & Charging porting */
+	static const char *const cc_orientation_text[] = {
+		"Unknown", "cc1", "cc2"
+	};
 
 static const char * const power_supply_status_text[] = {
 	"Unknown", "Charging", "Discharging", "Not charging", "Full"
@@ -60,7 +66,8 @@ static const char * const power_supply_charge_type_text[] = {
 static const char * const power_supply_health_text[] = {
 	"Unknown", "Good", "Overheat", "Dead", "Over voltage",
 	"Unspecified failure", "Cold", "Watchdog timer expire",
-	"Safety timer expire", "Over current", "Warm", "Cool", "Hot"
+	"Safety timer expire",
+	"Warm", "Cool", "Hot"
 };
 
 static const char * const power_supply_technology_text[] = {
@@ -146,6 +153,11 @@ static ssize_t power_supply_show_property(struct device *dev,
 	else if (off == POWER_SUPPLY_PROP_TYPEC_POWER_ROLE)
 		return scnprintf(buf, PAGE_SIZE, "%s\n",
 			       power_supply_usbc_pr_text[value.intval]);
+/* @bsp, 2019/04/17 Battery & Charging porting */
+	else if (off == POWER_SUPPLY_PROP_OEM_TYPEC_CC_ORIENTATION)
+		return snprintf(
+		buf, 255, "%s\n",
+		cc_orientation_text[value.intval]);
 	else if (off == POWER_SUPPLY_PROP_TYPEC_SRC_RP)
 		return scnprintf(buf, PAGE_SIZE, "%s\n",
 			       power_supply_typec_src_rp_text[value.intval]);
@@ -226,6 +238,28 @@ static ssize_t power_supply_store_property(struct device *dev,
 static struct device_attribute power_supply_attrs[] = {
 	/* Properties of type `int' */
 	POWER_SUPPLY_ATTR(status),
+/* @bsp, 2019/04/17 Battery & Charging porting */
+	POWER_SUPPLY_ATTR(set_allow_read_extern_fg_iic),
+	POWER_SUPPLY_ATTR(cc_to_cv_point),
+	POWER_SUPPLY_ATTR(chg_protect_status),
+	POWER_SUPPLY_ATTR(fastchg_status_is_ok),
+	POWER_SUPPLY_ATTR(fastchg_status),
+	POWER_SUPPLY_ATTR(fastchg_starting),
+	POWER_SUPPLY_ATTR(cutoff_volt_with_charger),
+	POWER_SUPPLY_ATTR(update_lcd_is_off),
+	POWER_SUPPLY_ATTR(check_usb_unplug),
+	POWER_SUPPLY_ATTR(otg_switch),
+	POWER_SUPPLY_ATTR(hw_detect),
+	POWER_SUPPLY_ATTR(switch_dash),
+	POWER_SUPPLY_ATTR(notify_charger_set_parameter),
+	POWER_SUPPLY_ATTR(fg_capacity),
+	POWER_SUPPLY_ATTR(fg_current_now),
+	POWER_SUPPLY_ATTR(fg_voltage_now),
+	POWER_SUPPLY_ATTR(is_aging_test),
+	POWER_SUPPLY_ATTR(connecter_temp),
+	POWER_SUPPLY_ATTR(connect_disable),
+	POWER_SUPPLY_ATTR(bq_soc),
+	POWER_SUPPLY_ATTR(oem_cc_orientation),
 	POWER_SUPPLY_ATTR(charge_type),
 	POWER_SUPPLY_ATTR(health),
 	POWER_SUPPLY_ATTR(present),
@@ -317,6 +351,9 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(temp_cold),
 	POWER_SUPPLY_ATTR(temp_hot),
 	POWER_SUPPLY_ATTR(system_temp_level),
+	POWER_SUPPLY_ATTR(battery_health),
+	POWER_SUPPLY_ATTR(op_disable_charge),
+	POWER_SUPPLY_ATTR(remaining_capacity),
 	POWER_SUPPLY_ATTR(resistance),
 	POWER_SUPPLY_ATTR(resistance_capacitive),
 	POWER_SUPPLY_ATTR(resistance_id),
@@ -482,29 +519,12 @@ void power_supply_init_attrs(struct device_type *dev_type)
 		__power_supply_attrs[i] = &power_supply_attrs[i].attr;
 }
 
-static char *kstruprdup(const char *str, gfp_t gfp)
-{
-	char *ret, *ustr;
-
-	ustr = ret = kmalloc(strlen(str) + 1, gfp);
-
-	if (!ret)
-		return NULL;
-
-	while (*str)
-		*ustr++ = toupper(*str++);
-
-	*ustr = 0;
-
-	return ret;
-}
-
 int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
 {
 	struct power_supply *psy = dev_get_drvdata(dev);
 	int ret = 0, j;
 	char *prop_buf;
-	char *attrname;
+	char attrname[64];
 
 	if (!psy || !psy->desc) {
 		dev_dbg(dev, "No power supply yet\n");
@@ -521,7 +541,8 @@ int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
 
 	for (j = 0; j < psy->desc->num_properties; j++) {
 		struct device_attribute *attr;
-		char *line;
+		const char *str;
+		char *line, *ustr;
 
 		attr = &power_supply_attrs[psy->desc->properties[j]];
 
@@ -540,14 +561,14 @@ int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
 		if (line)
 			*line = 0;
 
-		attrname = kstruprdup(attr->attr.name, GFP_KERNEL);
-		if (!attrname) {
-			ret = -ENOMEM;
-			goto out;
-		}
+		str = attr->attr.name;
+		ustr = attrname;
+		while (*str)
+			*ustr++ = toupper(*str++);
+
+		*ustr = 0;
 
 		ret = add_uevent_var(env, "POWER_SUPPLY_%s=%s", attrname, prop_buf);
-		kfree(attrname);
 		if (ret)
 			goto out;
 	}
