@@ -45,10 +45,15 @@
  * @queue:      incoming message queue
  * @readq:      wait object for incoming queue
  * @sig_change: flag to indicate serial signal change
+ * @notify_state_update: notify channel state
+ * @fragmented_read: set from dt node for partial read
  * @dev_name:   /dev/@dev_name for smd_pkt device
  * @ch_name:    smd channel to match to
  * @edge:       smd edge to match to
  * @open_tout:  timeout for open syscall, configurable in sysfs
+ * @rskb:       current skb being read
+ * @rdata:      data pointer in current skb
+ * @rdata_len:  remaining data to be read from skb
  */
 struct smd_pkt_dev {
 
@@ -64,6 +69,7 @@ struct smd_pkt_dev {
 	struct sk_buff_head queue;
 	wait_queue_head_t readq;
 	int sig_change;
+	bool notify_state_update;
 	bool fragmented_read;
 	const char *dev_name;
 	const char *ch_name;
@@ -157,6 +163,7 @@ static int smd_pkt_rpdev_probe(struct rpmsg_device *rpdev)
 
 	mutex_lock(&smd_pkt_devp->lock);
 	smd_pkt_devp->rpdev = rpdev;
+	smd_pkt_devp->notify_state_update = true;
 	mutex_unlock(&smd_pkt_devp->lock);
 	dev_set_drvdata(&rpdev->dev, smd_pkt_devp);
 	complete_all(&smd_pkt_devp->ch_open);
@@ -266,7 +273,7 @@ static long smd_pkt_ioctl(struct file *file, unsigned int cmd,
 {
 	struct smd_pkt_dev *smd_pkt_devp;
 	unsigned long flags;
-	u32 lsigs, rsigs;
+	u32 lsigs, rsigs, resetsigs;
 	int ret;
 
 	smd_pkt_devp = file->private_data;
@@ -281,19 +288,37 @@ static long smd_pkt_ioctl(struct file *file, unsigned int cmd,
 
 	if (!completion_done(&smd_pkt_devp->ch_open)) {
 		SMD_PKT_ERR("%s channel in reset\n", smd_pkt_devp->ch_name);
+		if ((cmd == TIOCMGET) && (smd_pkt_devp->notify_state_update)) {
+			resetsigs = TIOCM_OUT1 | TIOCM_OUT2;
+			smd_pkt_devp->notify_state_update = false;
+			mutex_unlock(&smd_pkt_devp->lock);
+
+			SMD_PKT_ERR("%s: reset notified resetsigs=%d\n",
+					smd_pkt_devp->ch_name, resetsigs);
+			ret = put_user(resetsigs, (uint32_t __user *)arg);
+			return ret;
+		}
 		mutex_unlock(&smd_pkt_devp->lock);
 		return -ENETRESET;
 	}
 
 	switch (cmd) {
 	case TIOCMGET:
+		resetsigs = 0;
 		spin_lock_irqsave(&smd_pkt_devp->queue_lock, flags);
 		smd_pkt_devp->sig_change = false;
+		if (smd_pkt_devp->notify_state_update) {
+			resetsigs = TIOCM_OUT2;
+			smd_pkt_devp->notify_state_update = false;
+			SMD_PKT_ERR("%s: reset notified resetsigs=%d\n",
+					smd_pkt_devp->ch_name, resetsigs);
+		}
 		spin_unlock_irqrestore(&smd_pkt_devp->queue_lock, flags);
 
 		ret = rpmsg_get_sigs(smd_pkt_devp->rpdev->ept, &lsigs, &rsigs);
 		if (!ret)
-			ret = put_user(rsigs, (uint32_t *)arg);
+			ret = put_user(rsigs | resetsigs,
+				       (uint32_t __user *)arg);
 		break;
 	case TIOCMSET:
 	case TIOCMBIS:
@@ -523,8 +548,7 @@ static unsigned int smd_pkt_poll(struct file *file, poll_table *wait)
 	}
 
 	spin_lock_irqsave(&smd_pkt_devp->queue_lock, flags);
-	if (!skb_queue_empty(&smd_pkt_devp->queue) ||
-				(smd_pkt_devp->rskb != NULL))
+	if (!skb_queue_empty(&smd_pkt_devp->queue) || smd_pkt_devp->rskb)
 		mask |= POLLIN | POLLRDNORM;
 
 	if (smd_pkt_devp->sig_change)
@@ -546,6 +570,7 @@ static void smd_pkt_rpdev_remove(struct rpmsg_device *rpdev)
 
 	mutex_lock(&smd_pkt_devp->lock);
 	smd_pkt_devp->rpdev = NULL;
+	smd_pkt_devp->notify_state_update = true;
 	mutex_unlock(&smd_pkt_devp->lock);
 
 	dev_set_drvdata(&rpdev->dev, NULL);
@@ -623,7 +648,7 @@ int smd_pkt_release(struct inode *inode, struct file *file)
 		spin_lock_irqsave(&smd_pkt_devp->queue_lock, flags);
 
 		/* Discard all SKBs */
-		if (smd_pkt_devp->rskb != NULL) {
+		if (smd_pkt_devp->rskb) {
 			kfree_skb(smd_pkt_devp->rskb);
 			smd_pkt_devp->rskb = NULL;
 			smd_pkt_devp->rdata = NULL;
