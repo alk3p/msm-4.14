@@ -1,0 +1,20 @@
+---
+kind: pipeline
+name: icekramel CI
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  depth: 1
+
+steps:
+  - name: build
+    image: archlinux:latest
+    commands:
+      - cd /drone/src
+      - pacman -Sy base-devel bc curl cpio libyaml lz4 git xz aarch64-linux-gnu-gcc arm-none-eabi-gcc --noconfirm
+      - export KBUILD_BUILD_USER=misaka
+      - export KBUILD_BUILD_HOST=tp-workstation
+      - bash ./build.sh upload
