@@ -3,8 +3,8 @@
 # IceKernel CI | Powered by Drone | 2020 -
 
 export ARCH=arm64
-export CROSS_COMPILE=aarch64-linux-gnu-
-export CROSS_COMPILE_ARM32=arm-none-eabi-
+export CROSS_COMPILE=../build-tools/arm64-gcc/bin/aarch64-elf-
+export CROSS_COMPILE_ARM32=../build-tools/arm32-gcc/bin/arm-eabi-
 export KJOBS="$((`grep -c '^processor' /proc/cpuinfo` * 2))"
 VERSION="$(cat arch/arm64/configs/sm8150-perf_defconfig | grep "CONFIG_LOCALVERSION\=" | sed -r 's/.*"(.+)".*/\1/' | sed 's/^.//')"
 
