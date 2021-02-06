@@ -11,10 +11,10 @@ clone:
 
 steps:
   - name: build
-    image: archlinux:latest
+    image: archlinux:base-devel
     commands:
       - cd /drone/src
-      - pacman -Sy base-devel bc curl cpio libyaml lz4 git xz aarch64-linux-gnu-gcc arm-none-eabi-gcc --noconfirm
+      - pacman -Sy bc curl cpio libyaml lib32-gcc-libs aarch64-linux-gnu-gcc arm-none-eabi-gcc --noconfirm
       - export KBUILD_BUILD_USER=misaka
       - export KBUILD_BUILD_HOST=tp-workstation
       - bash ./build.sh upload
