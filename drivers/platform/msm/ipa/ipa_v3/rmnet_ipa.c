@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2020, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2014-2021, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -2926,8 +2926,9 @@ static int ipa3_wwan_remove(struct platform_device *pdev)
 	if (ipa3_rmnet_res.ipa_napi_enable)
 		netif_napi_del(&(rmnet_ipa3_ctx->wwan_priv->napi));
 	mutex_unlock(&rmnet_ipa3_ctx->pipe_handle_guard);
-	IPAWANINFO("rmnet_ipa unregister_netdev\n");
+	IPAWANDBG("rmnet_ipa unregister_netdev started\n");
 	unregister_netdev(IPA_NETDEV());
+	IPAWANDBG("rmnet_ipa unregister_netdev completed\n");
 	if (ipa3_ctx->use_ipa_pm)
 		ipa3_wwan_deregister_netdev_pm_client();
 	else
@@ -4647,9 +4648,9 @@ int rmnet_ipa3_query_per_client_stats(
 		 */
 		if (data->disconnect_clnt &&
 			lan_client->inited) {
-			IPAWANERR("Client not inited. Try again.\n");
+			IPAWANERR("Client not inited.\n");
 			mutex_unlock(&rmnet_ipa3_ctx->per_client_stats_guard);
-			return -EAGAIN;
+			return -EALREADY;
 		}
 
 	} else {
@@ -4771,7 +4772,7 @@ int rmnet_ipa3_query_per_client_stats(
 int rmnet_ipa3_query_per_client_stats_v2(
 		struct wan_ioctl_query_per_client_stats *data)
 {
-	int lan_clnt_idx, i, j;
+	int lan_clnt_idx, i, j, result = 1;
 	struct ipa_lan_client *lan_client = NULL;
 	struct ipa_lan_client_cntr_index
 		*lan_client_index = NULL;
@@ -4822,6 +4823,19 @@ int rmnet_ipa3_query_per_client_stats_v2(
 			mutex_unlock(&rmnet_ipa3_ctx->per_client_stats_guard);
 			return -EINVAL;
 		}
+
+		teth_ptr = &rmnet_ipa3_ctx->tether_device[data->device_type];
+		lan_client = &teth_ptr->lan_client[lan_clnt_idx];
+		/*
+		 * Check if disconnect flag is set and
+		 * and client is inited or not.
+		 * if inited ignore resetting stats and return.
+		 */
+		if (data->disconnect_clnt && lan_client->inited) {
+			IPAWANERR("Client not inited.\n");
+			mutex_unlock(&rmnet_ipa3_ctx->per_client_stats_guard);
+			return -EAGAIN;
+		}
 	} else {
 		/* Max number of clients. */
 		/* Check if disconnect flag is set and
@@ -4829,7 +4843,7 @@ int rmnet_ipa3_query_per_client_stats_v2(
 		 */
 		if (data->disconnect_clnt &&
 			rmnet_ipa3_check_any_client_inited(data->device_type)) {
-			IPAWANERR("CLient not inited. Try again.\n");
+			IPAWANERR("CLient not inited.\n");
 			mutex_unlock(&rmnet_ipa3_ctx->per_client_stats_guard);
 			return -EAGAIN;
 		}
@@ -4867,9 +4881,9 @@ int rmnet_ipa3_query_per_client_stats_v2(
 				lan_client_index[i].ul_cnt_idx,
 				lan_client_index[i].dl_cnt_idx);
 		memset(query, 0, sizeof(query_f));
-		ret = rmnet_ipa_get_hw_fnr_stats_v2(&lan_client_index[i],
+		result = rmnet_ipa_get_hw_fnr_stats_v2(&lan_client_index[i],
 				data, query);
-		if (ret) {
+		if (result) {
 			IPAWANERR("Failed: Client type %d, idx %d\n",
 					data->device_type, i);
 			kfree((void *)query->stats);
@@ -4892,6 +4906,7 @@ int rmnet_ipa3_query_per_client_stats_v2(
 				data->client_info[i].ipv4_rx_bytes);
 
 		kfree((void *)query->stats);
+		ret = result;
 	}
 
 	/* Legacy per-client stats */
