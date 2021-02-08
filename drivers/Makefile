@@ -189,6 +189,7 @@ obj-$(CONFIG_MULTIPLEXER)	+= mux/
 obj-$(CONFIG_SENSORS_SSC)	+= sensors/
 obj-$(CONFIG_ESOC)              += esoc/
 obj-y                           += oneplus/
+obj-y  += param_read_write/
 obj-y  += step_motor/
 obj-$(CONFIG_TRI_STATE_KEY)     += tri_state_key/
 obj-$(CONFIG_AW8697_HAPTIC)     += vibrator/
