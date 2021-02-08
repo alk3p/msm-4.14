@@ -1,4 +1,3 @@
-#include <asm/uaccess.h>
 #include <linux/irq.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>

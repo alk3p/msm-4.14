@@ -6,7 +6,6 @@
 **      Definitions for motor  notifier.
 **
 **************************************************************************************/
-#include <asm/uaccess.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
