@@ -43,6 +43,7 @@
 
 #include "peripheral-loader.h"
 #include <linux/proc_fs.h>
+#include <linux/oem/param_rw.h>
 #include <linux/timer.h>
 #include <linux/timex.h>
 #include <linux/rtc.h>
@@ -1509,11 +1510,16 @@ void check_crash_restart(struct work_struct *work)
 	const char *name = dev->desc->name;
 	char crash_time[19];
 	char param_value[21];
-	int i;
+	int split = 0, times = 0;
+	int rc = 0;
+	int i = 0;
+	int crash_record_count = 0;
+	int is_find_key_word = 0;
 
 	struct timespec64 tspec;
 	struct rtc_time tm;
 	extern struct timezone sys_tz;
+	uint32 param_crash_record_offset = 0;
 
 	for (i = 0; crash_index[i].crash_index; i++) {
 		if (!strcmp(name, crash_index[i].crash_log_name)) {
@@ -1524,6 +1530,11 @@ void check_crash_restart(struct work_struct *work)
 			/* Get crash key word ID */
 			strlcat(param_value, crash_index[i].crash_index,
 				sizeof(param_value));
+
+			if (!strcmp("08", crash_index[i].crash_index))
+				add_restart_08_count();
+			else
+				add_restart_other_count();
 
 			__getnstimeofday64(&tspec);
 			if (sys_tz.tz_minuteswest < 0 ||
@@ -1536,7 +1547,37 @@ void check_crash_restart(struct work_struct *work)
 				tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
 			strlcat(param_value, crash_time, sizeof(param_value));
+
+			/* If find crash keyword, store crash record flag */
+			is_find_key_word = 1;
 		}
+	}
+
+	if (is_find_key_word) {
+		get_param_by_index_and_offset(9, 0x18, &crash_record_count,
+			sizeof(crash_record_count));
+		param_crash_record_offset = 0x1C;
+		param_crash_record_offset = param_crash_record_offset +
+			(crash_record_count * PARAM_CRASH_RECORD_SIZE);
+
+		pr_err("subsystem_restart: check_crash_restart: param_value = %s\n",
+			param_value);
+
+		/* Write crash record to PARAM */
+		split = sizeof(param_value)/4;
+		for (times = 0; times < split; times++) {
+			rc = set_param_by_index_and_offset(9,
+				param_crash_record_offset,
+					&param_value[times*4], 4);
+			param_crash_record_offset =
+				param_crash_record_offset + 4;
+		}
+
+		/* Counter+1 */
+		crash_record_count = crash_record_count + 1;
+		crash_record_count = crash_record_count % MAX_RECORD_COUNT;
+		set_param_by_index_and_offset(9, 0x18, &crash_record_count,
+			sizeof(crash_record_count));
 	}
 }
 
