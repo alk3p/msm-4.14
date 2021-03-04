@@ -90,7 +90,7 @@ static char aw8697_ram_name[5][30] = {
 {"aw8697_haptic_172.bin"},
 {"aw8697_haptic_174.bin"},
 };
-static char aw8697_rtp_name[][AW8697_RTP_NAME_MAX] = {
+static char aw8697_rtp_name_orig[][AW8697_RTP_NAME_MAX] = {
 	{"aw8697_rtp.bin"},
 	{"ring_alacrity.bin"},
 	{"ring_amenity.bin"},
@@ -168,6 +168,194 @@ static char aw8697_rtp_name[][AW8697_RTP_NAME_MAX] = {
 	{"alarm_walking_in_the_rain.bin"},
 	{"shuntai24k_rtp.bin"},
 	{"wentai24k_rtp.bin"},
+};
+
+// Add for Miui
+static char aw8697_rtp_name[][AW8697_RTP_NAME_MAX] = {
+    {"aw8697_rtp.bin"}, //8
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    //{"aw8697_rtp.bin"},
+    //{"aw8697_rtp.bin"},
+    {"AcousticGuitar_RTP.bin"}, //21
+    {"Blues_RTP.bin"},
+    {"Candy_RTP.bin"},
+    {"Carousel_RTP.bin"},
+    {"Celesta_RTP.bin"},
+    {"Childhood_RTP.bin"},
+    {"Country_RTP.bin"},
+    {"Cowboy_RTP.bin"},
+    {"Echo_RTP.bin"},
+    {"Fairyland_RTP.bin"},
+    {"Fantasy_RTP.bin"},
+    {"Field_Trip_RTP.bin"},
+    {"Glee_RTP.bin"},
+    {"Glockenspiel_RTP.bin"},
+    {"Ice_Latte_RTP.bin"},
+    {"Kung_Fu_RTP.bin"},
+    {"Leisure_RTP.bin"},
+    {"Lollipop_RTP.bin"},
+    {"MiMix2_RTP.bin"},
+    {"Mi_RTP.bin"},
+    {"MiHouse_RTP.bin"},
+    {"MiJazz_RTP.bin"},
+    {"MiRemix_RTP.bin"},
+    {"Mountain_Spring_RTP.bin"},
+    {"Orange_RTP.bin"},
+    {"Raindrops_RTP.bin"},
+    {"Space_Age_RTP.bin"},
+    {"ToyRobot_RTP.bin"},
+    {"Vigor_RTP.bin"},
+    {"Bottle_RTP.bin"},
+    {"Bubble_RTP.bin"},
+    {"Bullfrog_RTP.bin"},
+    {"Burst_RTP.bin"},
+    {"Chirp_RTP.bin"},
+    {"Clank_RTP.bin"},
+    {"Crystal_RTP.bin"},
+    {"FadeIn_RTP.bin"},
+    {"FadeOut_RTP.bin"},
+    {"Flute_RTP.bin"},
+    {"Fresh_RTP.bin"},
+    {"Frog_RTP.bin"},
+    {"Guitar_RTP.bin"},
+    {"Harp_RTP.bin"},
+    {"IncomingMessage_RTP.bin"},
+    {"MessageSent_RTP.bin"},
+    {"Moment_RTP.bin"},
+    {"NotificationXylophone_RTP.bin"},
+    {"Potion_RTP.bin"},
+    {"Radar_RTP.bin"},
+    {"Spring_RTP.bin"},
+    {"Swoosh_RTP.bin"}, //71
+    {"Gesture_UpSlide_RTP.bin"},
+    {"FOD_Motion_Planet_RTP.bin"},
+    {"Charge_Wire_RTP.bin"},
+    {"Charge_Wireless_RTP.bin"},
+    {"Unlock_Failed_RTP.bin"},
+    {"FOD_Motion1_RTP.bin"},
+    {"FOD_Motion2_RTP.bin"},
+    {"FOD_Motion3_RTP.bin"},
+    {"FOD_Motion4_RTP.bin"},
+    {"FOD_Motion_Aurora_RTP.bin"},
+    {"FaceID_Wrong2_RTP.bin"}, //82
+    {"uninstall_animation_rtp.bin"},
+    {"uninstall_dialog_rtp.bin"},
+    {"screenshot_rtp.bin"},
+    {"lockscreen_camera_entry_rtp.bin"},
+    {"launcher_edit_rtp.bin"},
+    {"launcher_icon_selection_rtp.bin"},
+    {"taskcard_remove_rtp.bin"},
+    {"task_cleanall_rtp.bin"},
+    {"new_iconfolder_rtp.bin"},
+    {"notification_remove_rtp.bin"},
+    {"notification_cleanall_rtp.bin"},
+    {"notification_setting_rtp.bin"},
+    {"game_turbo_rtp.bin"},
+    {"NFC_card_rtp.bin"},
+    {"wakeup_voice_assistant_rtp.bin"},
+    {"NFC_card_slow_rtp.bin"},
+    {"aw8697_rtp.bin"}, //99
+    {"aw8697_rtp.bin"}, //100
+    {"offline_countdown_RTP.bin"},
+    {"scene_bomb_injury_RTP.bin"},
+    {"scene_bomb_RTP.bin"}, //103
+    {"door_open_RTP.bin"},
+    {"aw8697_rtp.bin"},
+    {"scene_step_RTP.bin"}, //106
+    {"crawl_RTP.bin"},
+    {"scope_on_RTP.bin"},
+    {"scope_off_RTP.bin"},
+    {"magazine_quick_RTP.bin"},
+    {"grenade_RTP.bin"},
+    {"scene_getshot_RTP.bin"}, //112
+    {"grenade_explosion_RTP.bin"},
+    {"punch_RTP.bin"},
+    {"pan_RTP.bin"},
+    {"bandage_RTP.bin"},
+    {"aw8697_rtp.bin"},
+    {"scene_jump_RTP.bin"},
+    {"vehicle_plane_RTP.bin"}, //119
+    {"scene_openparachute_RTP.bin"}, //120
+    {"scene_closeparachute_RTP.bin"}, //121
+    {"vehicle_collision_RTP.bin"},
+    {"vehicle_buggy_RTP.bin"}, //123
+    {"vehicle_dacia_RTP.bin"}, //124
+    {"vehicle_moto_RTP.bin"}, //125
+    {"firearms_akm_RTP.bin"}, //126
+    {"firearms_m16a4_RTP.bin"}, //127
+    {"aw8697_rtp.bin"},
+    {"firearms_awm_RTP.bin"}, //129
+    {"firearms_mini14_RTP.bin"}, //130
+    {"firearms_vss_RTP.bin"}, //131
+    {"firearms_qbz_RTP.bin"}, //132
+    {"firearms_ump9_RTP.bin"}, //133
+    {"firearms_dp28_RTP.bin"}, //134
+    {"firearms_s1897_RTP.bin"}, //135
+    {"aw8697_rtp.bin"},
+    {"firearms_p18c_RTP.bin"}, //137
+    {"aw8697_rtp.bin"},
+    {"aw8697_rtp.bin"},
+    {"CFM_KillOne_RTP.bin"},
+    {"CFM_Headshot_RTP.bin"}, //141
+    {"CFM_MultiKill_RTP.bin"},
+    {"CFM_KillOne_Strong_RTP.bin"},
+    {"CFM_Headshot_Strong_RTP.bin"},
+    {"CFM_MultiKill_Strong_RTP.bin"},
+    {"CFM_Weapon_Grenade_Explode_RTP.bin"},
+    {"CFM_Weapon_Grenade_KillOne_RTP.bin"},
+    {"CFM_ImpactFlesh_Normal_RTP.bin"},
+    {"CFM_Weapon_C4_Installed_RTP.bin"},
+    {"CFM_Hero_Appear_RTP.bin"},
+    {"CFM_UI_Reward_OpenBox_RTP.bin"},
+    {"CFM_UI_Reward_Task_RTP.bin"},
+    {"CFM_Weapon_BLT_Shoot_RTP.bin"}, //153
+    {"Atlantis_RTP.bin"},
+    {"DigitalUniverse_RTP.bin"},
+    {"Reveries_RTP.bin"},
+    {"FOD_Motion_Triang_RTP.bin"},
+    {"FOD_Motion_Flare_RTP.bin"},
+    {"FOD_Motion_Ripple_RTP.bin"},
+    {"FOD_Motion_Spiral_RTP.bin"},
+    {"gamebox_launch_rtp.bin"}, // 161
+    {"Gesture_Back_Pull_RTP.bin"},// 162
+    {"Gesture_Back_Release_RTP.bin"},// 163
+    {"alert_rtp.bin"},// 164
+    {"feedback_negative_light_rtp.bin"},// 165
+    {"feedback_neutral_rtp.bin"},// 166
+    {"feedback_positive_rtp.bin"},// 167
+    {"fingerprint_record_rtp.bin"},// 168
+    {"lockdown_rtp.bin"},// 169
+    {"sliding_damping_rtp.bin"},// 170
+    {"todo_alldone_rtp.bin"},// 171
+    {"uninstall_animation_icon_rtp.bin"},// 172
+    {"signal_button_highlight_rtp.bin"},//173
+    {"signal_button_negative_rtp.bin"},
+    {"signal_button_rtp.bin"},
+    {"signal_clock_high_rtp.bin"},//176
+    {"signal_clock_rtp.bin"},
+    {"signal_clock_unit_rtp.bin"},
+    {"signal_inputbox_rtp.bin"},
+    {"signal_key_high_rtp.bin"},
+    {"signal_key_unit_rtp.bin"},//181
+    {"signal_list_highlight_rtp.bin"},
+    {"signal_list_rtp.bin"},
+    {"signal_picker_rtp.bin"},
+    {"signal_popup_rtp.bin"},
+    {"signal_seekbar_rtp.bin"},//186
+    {"signal_switch_rtp.bin"},
+    {"signal_tab_rtp.bin"},
+    {"signal_text_rtp.bin"},
+    {"signal_transition_light_rtp.bin"},
+    {"signal_transition_rtp.bin"},//191
 };
 
 struct aw8697_container *aw8697_rtp;
