@@ -5141,6 +5141,41 @@ static ssize_t aw8697_haptic_audio_hap_cnt_max_outside_tz_store(struct device *d
     return count;
 }
 
+static ssize_t aw8697_waveform_index_show(struct device *dev, struct device_attribute *attr,
+                char *buf)
+{
+    return 0;
+}
+
+static ssize_t aw8697_waveform_index_store(struct device *dev, struct device_attribute *attr,
+                const char *buf, size_t count)
+{
+#ifdef TIMED_OUTPUT
+    struct timed_output_dev *to_dev = dev_get_drvdata(dev);
+    struct aw8697 *aw8697 = container_of(to_dev, struct aw8697, to_dev);
+#else
+    struct led_classdev *cdev = dev_get_drvdata(dev);
+    struct aw8697 *aw8697 = container_of(cdev, struct aw8697, cdev);
+#endif
+    unsigned int databuf[1] = {0};
+
+    aw8697->vmax = 0x11;
+    aw8697->gain = 0x80;
+    aw8697_haptic_set_gain(aw8697, aw8697->gain);
+    aw8697_haptic_set_bst_vol(aw8697, aw8697->vmax);
+
+    if (sscanf(buf, "%x", &databuf[0] == 1)) {
+        pr_err("%s: waveform_index = %d\n", __FUNCTION__, databuf[0]);
+        mutex_lock(&aw8697->lock);
+        aw8697->seq[0] = (unsigned char)databuf[0];
+        aw8697_haptic_set_wav_seq(aw8697, 0, aw8697->seq[0]);
+        aw8697_haptic_set_wav_seq(aw8697, 1, 0);
+        aw8697_haptic_set_wav_loop(aw8697, 0, 0);
+        mutex_unlock(&aw8697->lock);
+    }
+    return count;
+}
+
 static int aw8697_i2c_reads(struct aw8697 *aw8697,
 		unsigned char reg_addr, unsigned char *buf, unsigned int len)
 {
@@ -5309,6 +5344,7 @@ static DEVICE_ATTR(haptic_audio_tp_input, S_IWUSR | S_IRUGO, aw8697_haptic_audio
 static DEVICE_ATTR(haptic_audio_ai_input, S_IWUSR | S_IRUGO, aw8697_haptic_audio_ai_input_show, aw8697_haptic_audio_ai_input_store);
 static DEVICE_ATTR(haptic_audio_tp_size, S_IWUSR | S_IRUGO, aw8697_haptic_audio_tp_size_show, aw8697_haptic_audio_tp_size_store);
 static DEVICE_ATTR(haptic_audio_tz_cnt, S_IWUSR | S_IRUGO, aw8697_haptic_audio_tz_cnt_show, aw8697_haptic_audio_tz_cnt_store);
+static DEVICE_ATTR(waveform_index, S_IWUSR | S_IRUGO, aw8697_waveform_index_show, aw8697_waveform_index_store);
 static DEVICE_ATTR(haptic_audio_hap_cnt_max_outside_tz, S_IWUSR | S_IRUGO, aw8697_haptic_audio_hap_cnt_max_outside_tz_show, aw8697_haptic_audio_hap_cnt_max_outside_tz_store);
 static DEVICE_ATTR(haptic_osc_data, S_IWUSR | S_IRUGO, aw8697_haptic_osc_data_show, aw8697_osc_data_store);
 static DEVICE_ATTR(ram_test, S_IWUSR | S_IRUGO, aw8697_haptic_ram_test_show, aw8697_haptic_ram_test_store);
@@ -5353,6 +5389,7 @@ static struct attribute *aw8697_vibrator_attributes[] = {
     &dev_attr_haptic_audio_tz_cnt.attr,
     &dev_attr_haptic_audio_hap_cnt_max_outside_tz.attr,
     &dev_attr_haptic_osc_data.attr,
+    &dev_attr_waveform_index.attr,
     &dev_attr_ram_test.attr,
     &dev_attr_gun_type.attr,
     &dev_attr_bullet_nr.attr,
