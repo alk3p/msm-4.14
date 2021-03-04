@@ -5779,15 +5779,11 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 		return 0;
     }
 
-	if (display->panel->aod_status == 1) {
-		if (oneplus_dim_status == 2 && oneplus_onscreenfp_status == 1) {
-			fp_mode = 1;
-			//dim_mode = 0;
-		} else if (oneplus_dim_status == 2 && oneplus_onscreenfp_status == 0) {
-			fp_mode = 0;
-			dim_mode = 0;
-		}
+	if (display->panel->aod_status == 1 && oneplus_dim_status == 2) {
+		fp_mode = !!oneplus_onscreenfp_status;
+		dim_mode = 0;
 	}
+
 	if (oneplus_dim_status == 5 || aod_layer_hide == 1) {
 		oneplus_aod_hid = 1;
 		dim_mode = 0;
