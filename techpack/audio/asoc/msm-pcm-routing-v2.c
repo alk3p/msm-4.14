@@ -1268,7 +1268,7 @@ static int msm_pcm_loopback_volume_get(struct snd_kcontrol *kcontrol,
 static int msm_pcm_loopback_volume_put(struct snd_kcontrol *kcontrol,
 			       struct snd_ctl_elem_value *ucontrol)
 {
-	pr_info("%s: volume = %d\n", __func__, ucontrol->value.integer.value[0]);
+	pr_info("%s: volume = %ld\n", __func__, ucontrol->value.integer.value[0]);
 
 	if (loopback_map.active) {
 		loopback_map.volume = ucontrol->value.integer.value[0];
@@ -18429,14 +18429,14 @@ static const int wsa_rx_0_vi_fb_tx_rch_value[] = {
 };
 
 #ifndef CONFIG_SND_SOC_TFA9874_FOR_DAVI
-static const int const mi2s_rx_vi_fb_tx_value[] = {
+static const int mi2s_rx_vi_fb_tx_value[] = {
         MSM_BACKEND_DAI_MAX, MSM_BACKEND_DAI_SENARY_MI2S_TX
 
 static const int mi2s_rx_vi_fb_tx_value[] = {
 	MSM_BACKEND_DAI_MAX, MSM_BACKEND_DAI_SENARY_MI2S_TX
 };
 #else
-static const int const mi2s_rx_vi_fb_tx_value[] = {
+static const int mi2s_rx_vi_fb_tx_value[] = {
 	MSM_BACKEND_DAI_MAX, MSM_BACKEND_DAI_QUATERNARY_MI2S_TX
 };
 #endif
