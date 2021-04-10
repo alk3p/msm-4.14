@@ -2134,6 +2134,13 @@ static int __init console_setup(char *str)
 }
 __setup("console=", console_setup);
 
+int __init force_oem_console_setup(char *str)
+{
+	console_setup(str);
+	return 1;
+}
+EXPORT_SYMBOL(force_oem_console_setup);
+
 /**
  * add_preferred_console - add a device to the list of preferred consoles.
  * @name: device name
