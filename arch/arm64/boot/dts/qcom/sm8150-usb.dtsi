@@ -98,10 +98,10 @@
 			snps,has-lpm-erratum;
 			snps,hird-threshold = /bits/ 8 <0x10>;
 			snps,ssp-u3-u0-quirk;
-			snps,usb3-u1u2-disable;
+			//snps,usb3-u1u2-disable;
 			usb-core-id = <0>;
 			tx-fifo-resize;
-			maximum-speed = "super-speed-plus";
+			maximum-speed = "super-speed";
 			dr_mode = "otg";
 		};
 
