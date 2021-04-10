@@ -1,4 +1,3 @@
-#include <asm/uaccess.h>
 #include <linux/irq.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
@@ -10,7 +9,6 @@
 #include <linux/time.h>
 #include <linux/delay.h>
 #include <linux/regulator/consumer.h>
-#include <linux/project_info.h>
 #include <linux/time.h>
 #include <linux/pm_wakeup.h>
 
@@ -2966,10 +2964,6 @@ static void tp_util_get_vendor(struct touchpanel_data *ts,
 		panel_data->TP_FW);
 	sprintf(panel_data->manufacture_info.manufacture,
 		panel_data->chip_name);
-	push_component_info(TOUCH_KEY, panel_data->manufacture_info.version,
-			    panel_data->manufacture_info.manufacture);
-	push_component_info(TP, panel_data->manufacture_info.version,
-			    panel_data->manufacture_info.manufacture);
 
 	TPD_INFO("%s fw:%s limit:%s\n", __func__, panel_data->fw_name,
 		 panel_data->test_limit_name);
