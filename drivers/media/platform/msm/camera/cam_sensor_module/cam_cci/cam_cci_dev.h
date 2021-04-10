@@ -31,9 +31,9 @@
 #include <media/v4l2-event.h>
 #include <media/v4l2-ioctl.h>
 #include <media/v4l2-subdev.h>
-#include "../cam_sensor_utils/cam_sensor_cmn_header.h"
+#include <cam_sensor_cmn_header.h>
 #include <cam_io_util.h>
-#include "../cam_sensor_utils/cam_sensor_util.h"
+#include <cam_sensor_util.h>
 #include <cam_subdev.h>
 #include <cam_cpas_api.h>
 #include "cam_cci_hwreg.h"
@@ -317,6 +317,6 @@ static inline struct v4l2_subdev *cam_cci_get_subdev(int cci_dev_index)
 #endif
 
 #define VIDIOC_MSM_CCI_CFG \
-	_IOWR('V', BASE_VIDIOC_PRIVATE + 23, struct cam_cci_ctrl)
+	_IOWR('V', BASE_VIDIOC_PRIVATE + 23, struct cam_cci_ctrl *)
 
 #endif /* _CAM_CCI_DEV_H_ */
