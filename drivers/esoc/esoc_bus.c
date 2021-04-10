@@ -13,6 +13,7 @@
 #include <linux/idr.h>
 #include <linux/slab.h>
 #include "esoc.h"
+#include <linux/oneplus/boot_mode.h>
 
 static DEFINE_IDA(esoc_ida);
 
@@ -386,6 +387,12 @@ EXPORT_SYMBOL(esoc_drv_register);
 static int __init esoc_init(void)
 {
 	int ret;
+
+	if (get_second_board_absent() == 1) {
+		pr_err("%s: second board absent, don't probe esoc", __func__);
+		ret = -1;
+		return ret;
+	}
 
 	ret = device_register(&esoc_bus);
 	if (ret) {
