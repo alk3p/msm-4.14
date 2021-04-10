@@ -18,8 +18,6 @@
 #include "cam_trace.h"
 #include "cam_common_util.h"
 
-#include <linux/project_info.h>
-
 #include <linux/oneplus/boot_mode.h>
 
 struct camera_vendor_match_tbl {
@@ -1005,7 +1003,6 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 		&s_ctrl->sensordata->power_info;
 	uint32_t count = 0, i;
 	int retry = 3;
-	enum COMPONENT_TYPE CameraID;
 	if (!s_ctrl || !arg) {
 		CAM_ERR(CAM_SENSOR, "s_ctrl is NULL");
 		return -EINVAL;
@@ -1128,17 +1125,6 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 		s_ctrl->is_probe_succeed = 1;
 		s_ctrl->sensor_state = CAM_SENSOR_INIT;
 
-		if (s_ctrl->id == 0)
-			CameraID = R_CAMERA;
-		else if (s_ctrl->id == 1)
-			CameraID = SECOND_R_CAMERA;
-		else if (s_ctrl->id == 2)
-			CameraID = F_CAMERA;
-		else if (s_ctrl->id == 3)
-			CameraID = THIRD_R_CAMERA;
-		else
-			CameraID = -1;
-
 		count = ARRAY_SIZE(match_tbl);
 		for (i = 0; i < count; i++) {
 			if (s_ctrl->sensordata->slave_info.sensor_id
@@ -1148,10 +1134,6 @@ int32_t cam_sensor_driver_cmd(struct cam_sensor_ctrl_t *s_ctrl,
 		if (i >= count)
 			CAM_ERR(CAM_SENSOR, "current sensor name is 0x%x",
 				s_ctrl->sensordata->slave_info.sensor_id);
-		else
-			push_component_info(CameraID, match_tbl[i].sensor_name,
-				match_tbl[i].vendor_name);
-
 	}
 		break;
 	case CAM_ACQUIRE_DEV: {

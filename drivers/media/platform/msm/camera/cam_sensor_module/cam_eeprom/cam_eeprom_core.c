@@ -18,7 +18,6 @@
 #include "cam_eeprom_soc.h"
 #include "cam_debug_util.h"
 
-#include <linux/project_info.h>
 struct module_vendor_match_tbl {
 	uint32_t sensor_id;
 	uint32_t vendor_id;
@@ -227,14 +226,12 @@ static int cam_eeprom_read_memory(struct cam_eeprom_ctrl_t *e_ctrl,
 			if (EEPROM_FRONT_SENSOR_ID == module_sensor_id) {
 				if (f_module_dated == false) {
 					snprintf(f_module_date, sizeof(f_module_date), "%02d%02d%02d%02d", yearH, yearL, month, day);
-					push_component_info(F_MODULE, match_tbl[k].vendor_name, f_module_date);
 					CAM_INFO(CAM_EEPROM, "F_MODULE date:%s", f_module_date);
 					f_module_dated = true;
 				}
 			} else {
 				if (r_module_dated == false) {
 					snprintf(r_module_date, sizeof(r_module_date), "%02d%02d%02d%02d", yearH, yearL, month, day);
-					push_component_info(R_MODULE, match_tbl[k].vendor_name, r_module_date);
 					CAM_INFO(CAM_EEPROM, "R_MODULE date:%s", r_module_date);
 					r_module_dated = true;
 				}
