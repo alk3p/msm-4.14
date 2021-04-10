@@ -1,0 +1,9 @@
+config FINGERPRINT_GOODIX
+	tristate "Goodix fingerprint sensor support"
+	depends on SPI_MASTER
+	help
+	  Say Y here to enable support for retrieving self-test reports.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here.
