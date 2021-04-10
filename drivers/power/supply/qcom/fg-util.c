@@ -396,20 +396,19 @@ void fg_notify_charger(struct fg_dev *fg)
 	if (!fg->profile_available)
 		return;
 
-	prop.intval = fg->bp.float_volt_uv;
-	rc = power_supply_set_property(fg->batt_psy,
-			POWER_SUPPLY_PROP_VOLTAGE_MAX, &prop);
-	if (rc < 0) {
-		pr_err("Error in setting voltage_max property on batt_psy, rc=%d\n",
-			rc);
-		return;
-	}
-
 	prop.intval = fg->bp.fastchg_curr_ma * 1000;
 	rc = power_supply_set_property(fg->batt_psy,
 			POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX, &prop);
 	if (rc < 0) {
 		pr_err("Error in setting constant_charge_current_max property on batt_psy, rc=%d\n",
+			rc);
+		return;
+	}
+
+	rc = power_supply_set_property(fg->batt_psy,
+			POWER_SUPPLY_PROP_NOTIFY_CHARGER_SET_PARAMETER, &prop);
+	if (rc < 0) {
+		pr_err("Error in setting voltage_max property on batt_psy, rc=%d\n",
 			rc);
 		return;
 	}
