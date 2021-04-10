@@ -85,6 +85,7 @@ modules.builtin
 include/config
 include/generated
 arch/*/include/generated
+kernel/kheaders_data.tar.xz.tmp
 
 # stgit generated dirs
 patches-*
