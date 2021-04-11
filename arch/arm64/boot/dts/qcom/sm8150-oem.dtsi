@@ -1223,6 +1223,12 @@ tp_irq_active: tp_irq_active {
 };
 
 &reserved_memory {
+
+	param_mem: param_mem@ac200000 {
+		reg = <0 0xAC200000 0 0x00100000>;
+		label = "param_mem";
+	};
+
 	//after cdsp_sec_mem
 	ramoops: ramoops@0xA9800000 {
 		compatible = "ramoops";
