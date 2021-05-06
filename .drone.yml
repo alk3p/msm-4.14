@@ -15,8 +15,8 @@ steps:
     commands:
       - cd /drone/src
       - apt update && apt install -y bc build-essential cpio curl git liblz4-1 libyaml-0-2
-      - git clone https://github.com/arter97/arm64-gcc /drone/build-tools/arm64-gcc --depth 1
-      - git clone https://github.com/arter97/arm32-gcc /drone/build-tools/arm32-gcc --depth 1
+      - git clone https://github.com/alk3p/arm64-gcc /drone/build-tools/arm64-gcc --depth 1
+      - git clone https://github.com/alk3p/arm32-gcc /drone/build-tools/arm32-gcc --depth 1
       - git clone https://github.com/alk3p/build-scripts /drone/build-tools/build-scripts --branch op7-r --depth 1
       - export KBUILD_BUILD_USER=misaka
       - export KBUILD_BUILD_HOST=tp-workstation
