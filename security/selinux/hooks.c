@@ -103,13 +103,13 @@
 #include "avc_ss_reset.h"
 #endif /* CONFIG_VBSWAP_HELPER */
 
-struct selinux_state selinux_state __rticdata;
+struct selinux_state selinux_state;
 
 /* SECMARK reference count */
 static atomic_t selinux_secmark_refcount = ATOMIC_INIT(0);
 
 #ifdef CONFIG_SECURITY_SELINUX_DEVELOP
-static int selinux_enforcing_boot;
+static int selinux_enforcing_boot __rticdata;
 
 static int __init enforcing_setup(char *str)
 {
