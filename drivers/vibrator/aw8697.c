@@ -5164,7 +5164,7 @@ static ssize_t aw8697_waveform_index_store(struct device *dev, struct device_att
     aw8697_haptic_set_gain(aw8697, aw8697->gain);
     aw8697_haptic_set_bst_vol(aw8697, aw8697->vmax);
 
-    if (sscanf(buf, "%x", &databuf[0] == 1)) {
+    if (sscanf(buf, "%d", &databuf[0])) {
         pr_err("%s: waveform_index = %d\n", __FUNCTION__, databuf[0]);
         mutex_lock(&aw8697->lock);
         aw8697->seq[0] = (unsigned char)databuf[0];
