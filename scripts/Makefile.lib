@@ -268,7 +268,11 @@ cmd_gzip = (cat $(filter-out FORCE,$^) | gzip -n -f -9 > $@) || \
 
 # DTC
 # ---------------------------------------------------------------------------
+ifeq ($(shell uname), Darwin)
+DTC = $(srctree)/prebuilts/dtc-darwin
+else
 DTC = $(srctree)/prebuilts/dtc
+endif
 
 # Silence warnings
 DTC_FLAGS += -q
@@ -330,7 +334,7 @@ cmd_cat = (cat $(filter-out FORCE,$^) > $@) || (rm -f $@; false)
 size_append = printf $(shell						\
 dec_size=0;								\
 for F in $1; do								\
-	fsize=$$(stat -c "%s" $$F);					\
+	fsize=$$(wc -c < $$F);						\
 	dec_size=$$(expr $$dec_size + $$fsize);				\
 done;									\
 printf "%08x\n" $$dec_size |						\

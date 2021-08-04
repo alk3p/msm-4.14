@@ -1185,6 +1185,19 @@ static ssize_t oneplus_display_set_forcescreenfp(struct device *dev,
 
 int dimlayer_hbm_is_single_layer = 0;
 int chen_need_active_hbm_next_frame = 0;
+int chen_power_status = 0;
+static ssize_t op_display_get_power_status(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", chen_power_status);
+}
+
+extern bool is_exist_fp_icon;
+static ssize_t op_display_get_is_exist_fp_icon(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", is_exist_fp_icon);
+}
 
 static ssize_t op_display_get_dimlayer_hbm_is_single_layer(struct device *dev,
 				struct device_attribute *attr, char *buf)
@@ -1308,6 +1321,8 @@ static DEVICE_ATTR(dp_en, S_IRUGO|S_IWUSR, op_display_get_dp_enable, op_display_
 static DEVICE_ATTR(dither_en, S_IRUGO|S_IWUSR, op_display_get_dither_enable, op_display_set_dither_enable);
 static DEVICE_ATTR(dimlayer_hbm_is_single_layer, S_IRUGO|S_IWUSR, op_display_get_dimlayer_hbm_is_single_layer, NULL);
 static DEVICE_ATTR(chen_need_hbm_next_frame, S_IRUGO|S_IWUSR, op_display_get_chen_need_active_hbm_next_frame, op_display_set_chen_need_active_hbm_next_frame);
+static DEVICE_ATTR(power_status, S_IRUGO|S_IWUSR, op_display_get_power_status, NULL);
+static DEVICE_ATTR(is_exist_fp_icon, S_IRUGO|S_IWUSR, op_display_get_is_exist_fp_icon, NULL);
 
 static struct attribute *connector_dev_attrs[] = {
 	&dev_attr_status.attr,
@@ -1347,6 +1362,8 @@ static struct attribute *connector_dev_attrs[] = {
 	&dev_attr_dither_en.attr,
 	&dev_attr_dimlayer_hbm_is_single_layer.attr,
 	&dev_attr_chen_need_hbm_next_frame.attr,
+	&dev_attr_power_status.attr,
+	&dev_attr_is_exist_fp_icon.attr,
 	NULL
 };
 
