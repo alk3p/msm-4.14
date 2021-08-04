@@ -170,192 +170,90 @@ static char aw8697_rtp_name_orig[][AW8697_RTP_NAME_MAX] = {
 	{"wentai24k_rtp.bin"},
 };
 
-// Add for Miui
+// Add for Flyme
 static char aw8697_rtp_name[][AW8697_RTP_NAME_MAX] = {
-    {"aw8697_rtp.bin"}, //8
     {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    //{"aw8697_rtp.bin"},
-    //{"aw8697_rtp.bin"},
-    {"AcousticGuitar_RTP.bin"}, //21
-    {"Blues_RTP.bin"},
-    {"Candy_RTP.bin"},
-    {"Carousel_RTP.bin"},
-    {"Celesta_RTP.bin"},
-    {"Childhood_RTP.bin"},
-    {"Country_RTP.bin"},
-    {"Cowboy_RTP.bin"},
-    {"Echo_RTP.bin"},
-    {"Fairyland_RTP.bin"},
-    {"Fantasy_RTP.bin"},
-    {"Field_Trip_RTP.bin"},
-    {"Glee_RTP.bin"},
-    {"Glockenspiel_RTP.bin"},
-    {"Ice_Latte_RTP.bin"},
-    {"Kung_Fu_RTP.bin"},
-    {"Leisure_RTP.bin"},
-    {"Lollipop_RTP.bin"},
-    {"MiMix2_RTP.bin"},
-    {"Mi_RTP.bin"},
-    {"MiHouse_RTP.bin"},
-    {"MiJazz_RTP.bin"},
-    {"MiRemix_RTP.bin"},
-    {"Mountain_Spring_RTP.bin"},
-    {"Orange_RTP.bin"},
-    {"Raindrops_RTP.bin"},
-    {"Space_Age_RTP.bin"},
-    {"ToyRobot_RTP.bin"},
-    {"Vigor_RTP.bin"},
-    {"Bottle_RTP.bin"},
-    {"Bubble_RTP.bin"},
-    {"Bullfrog_RTP.bin"},
-    {"Burst_RTP.bin"},
-    {"Chirp_RTP.bin"},
-    {"Clank_RTP.bin"},
-    {"Crystal_RTP.bin"},
-    {"FadeIn_RTP.bin"},
-    {"FadeOut_RTP.bin"},
-    {"Flute_RTP.bin"},
-    {"Fresh_RTP.bin"},
-    {"Frog_RTP.bin"},
-    {"Guitar_RTP.bin"},
-    {"Harp_RTP.bin"},
-    {"IncomingMessage_RTP.bin"},
-    {"MessageSent_RTP.bin"},
-    {"Moment_RTP.bin"},
-    {"NotificationXylophone_RTP.bin"},
-    {"Potion_RTP.bin"},
-    {"Radar_RTP.bin"},
-    {"Spring_RTP.bin"},
-    {"Swoosh_RTP.bin"}, //71
-    {"Gesture_UpSlide_RTP.bin"},
-    {"FOD_Motion_Planet_RTP.bin"},
-    {"Charge_Wire_RTP.bin"},
-    {"Charge_Wireless_RTP.bin"},
-    {"Unlock_Failed_RTP.bin"},
-    {"FOD_Motion1_RTP.bin"},
-    {"FOD_Motion2_RTP.bin"},
-    {"FOD_Motion3_RTP.bin"},
-    {"FOD_Motion4_RTP.bin"},
-    {"FOD_Motion_Aurora_RTP.bin"},
-    {"FaceID_Wrong2_RTP.bin"}, //82
-    {"uninstall_animation_rtp.bin"},
-    {"uninstall_dialog_rtp.bin"},
-    {"screenshot_rtp.bin"},
-    {"lockscreen_camera_entry_rtp.bin"},
-    {"launcher_edit_rtp.bin"},
-    {"launcher_icon_selection_rtp.bin"},
-    {"taskcard_remove_rtp.bin"},
-    {"task_cleanall_rtp.bin"},
-    {"new_iconfolder_rtp.bin"},
-    {"notification_remove_rtp.bin"},
-    {"notification_cleanall_rtp.bin"},
-    {"notification_setting_rtp.bin"},
-    {"game_turbo_rtp.bin"},
-    {"NFC_card_rtp.bin"},
-    {"wakeup_voice_assistant_rtp.bin"},
-    {"NFC_card_slow_rtp.bin"},
-    {"aw8697_rtp.bin"}, //99
-    {"aw8697_rtp.bin"}, //100
-    {"offline_countdown_RTP.bin"},
-    {"scene_bomb_injury_RTP.bin"},
-    {"scene_bomb_RTP.bin"}, //103
-    {"door_open_RTP.bin"},
-    {"aw8697_rtp.bin"},
-    {"scene_step_RTP.bin"}, //106
-    {"crawl_RTP.bin"},
-    {"scope_on_RTP.bin"},
-    {"scope_off_RTP.bin"},
-    {"magazine_quick_RTP.bin"},
-    {"grenade_RTP.bin"},
-    {"scene_getshot_RTP.bin"}, //112
-    {"grenade_explosion_RTP.bin"},
-    {"punch_RTP.bin"},
-    {"pan_RTP.bin"},
-    {"bandage_RTP.bin"},
-    {"aw8697_rtp.bin"},
-    {"scene_jump_RTP.bin"},
-    {"vehicle_plane_RTP.bin"}, //119
-    {"scene_openparachute_RTP.bin"}, //120
-    {"scene_closeparachute_RTP.bin"}, //121
-    {"vehicle_collision_RTP.bin"},
-    {"vehicle_buggy_RTP.bin"}, //123
-    {"vehicle_dacia_RTP.bin"}, //124
-    {"vehicle_moto_RTP.bin"}, //125
-    {"firearms_akm_RTP.bin"}, //126
-    {"firearms_m16a4_RTP.bin"}, //127
-    {"aw8697_rtp.bin"},
-    {"firearms_awm_RTP.bin"}, //129
-    {"firearms_mini14_RTP.bin"}, //130
-    {"firearms_vss_RTP.bin"}, //131
-    {"firearms_qbz_RTP.bin"}, //132
-    {"firearms_ump9_RTP.bin"}, //133
-    {"firearms_dp28_RTP.bin"}, //134
-    {"firearms_s1897_RTP.bin"}, //135
-    {"aw8697_rtp.bin"},
-    {"firearms_p18c_RTP.bin"}, //137
-    {"aw8697_rtp.bin"},
-    {"aw8697_rtp.bin"},
-    {"CFM_KillOne_RTP.bin"},
-    {"CFM_Headshot_RTP.bin"}, //141
-    {"CFM_MultiKill_RTP.bin"},
-    {"CFM_KillOne_Strong_RTP.bin"},
-    {"CFM_Headshot_Strong_RTP.bin"},
-    {"CFM_MultiKill_Strong_RTP.bin"},
-    {"CFM_Weapon_Grenade_Explode_RTP.bin"},
-    {"CFM_Weapon_Grenade_KillOne_RTP.bin"},
-    {"CFM_ImpactFlesh_Normal_RTP.bin"},
-    {"CFM_Weapon_C4_Installed_RTP.bin"},
-    {"CFM_Hero_Appear_RTP.bin"},
-    {"CFM_UI_Reward_OpenBox_RTP.bin"},
-    {"CFM_UI_Reward_Task_RTP.bin"},
-    {"CFM_Weapon_BLT_Shoot_RTP.bin"}, //153
-    {"Atlantis_RTP.bin"},
-    {"DigitalUniverse_RTP.bin"},
-    {"Reveries_RTP.bin"},
-    {"FOD_Motion_Triang_RTP.bin"},
-    {"FOD_Motion_Flare_RTP.bin"},
-    {"FOD_Motion_Ripple_RTP.bin"},
-    {"FOD_Motion_Spiral_RTP.bin"},
-    {"gamebox_launch_rtp.bin"}, // 161
-    {"Gesture_Back_Pull_RTP.bin"},// 162
-    {"Gesture_Back_Release_RTP.bin"},// 163
-    {"alert_rtp.bin"},// 164
-    {"feedback_negative_light_rtp.bin"},// 165
-    {"feedback_neutral_rtp.bin"},// 166
-    {"feedback_positive_rtp.bin"},// 167
-    {"fingerprint_record_rtp.bin"},// 168
-    {"lockdown_rtp.bin"},// 169
-    {"sliding_damping_rtp.bin"},// 170
-    {"todo_alldone_rtp.bin"},// 171
-    {"uninstall_animation_icon_rtp.bin"},// 172
-    {"signal_button_highlight_rtp.bin"},//173
-    {"signal_button_negative_rtp.bin"},
-    {"signal_button_rtp.bin"},
-    {"signal_clock_high_rtp.bin"},//176
-    {"signal_clock_rtp.bin"},
-    {"signal_clock_unit_rtp.bin"},
-    {"signal_inputbox_rtp.bin"},
-    {"signal_key_high_rtp.bin"},
-    {"signal_key_unit_rtp.bin"},//181
-    {"signal_list_highlight_rtp.bin"},
-    {"signal_list_rtp.bin"},
-    {"signal_picker_rtp.bin"},
-    {"signal_popup_rtp.bin"},
-    {"signal_seekbar_rtp.bin"},//186
-    {"signal_switch_rtp.bin"},
-    {"signal_tab_rtp.bin"},
-    {"signal_text_rtp.bin"},
-    {"signal_transition_light_rtp.bin"},
-    {"signal_transition_rtp.bin"},//191
+    {"cleanup_ring.bin"},  // 1
+    {"coin_ring.bin"},     // 2
+    {"defalm_ring.bin"},   // 3
+    {"defalm_ring01.bin"}, // 4
+    {"defsim_ring.bin"},   // 5
+    {"mpacc_ring.bin"},    // 6
+    {"plug_usb_ring.bin"}, // 7
+    {"sim_ring00.bin"},    // 8
+    {"sim_ring01.bin"},    // 9
+    {"sim_ring02.bin"},    // 10
+    {"sim_ring03.bin"},    // 11
+    {"sim_ring04.bin"},    // 12
+    {"sim_ring05.bin"},    // 13
+    {"sim_ring06.bin"},    // 14
+    {"sim_ring07.bin"},    // 15
+    {"sim_ring08.bin"},    // 16
+    {"sim_ring09.bin"},    // 17
+    {"sim_ring10.bin"},    // 18
+    {"sim_ring11.bin"},    // 19
+    {"sim_ring12.bin"},    // 20
+    {"sim_ring13.bin"},    // 21
+    {"sim_ring14.bin"},    // 22
+    {"sim_ring15.bin"},    // 23
+    {"sim_ring16.bin"},    // 24
+    {"sim_ring17.bin"},    // 25
+    {"sim_ring18.bin"},    // 26
+    {"sim_ring19.bin"},    // 27
+    {"sim_ring20.bin"},    // 28
+    {"sim_ring21.bin"},    // 29
+    {"sim_ring22.bin"},    // 30
+    {"sim_ring23.bin"},    // 31
+    {"sim_ring24.bin"},    // 32
+    {"sim_ring25.bin"},    // 33
+    {"sim_ring26.bin"},    // 34
+    {"sim_ring27.bin"},    // 35
+    {"sim_ring28.bin"},    // 36
+    {"sim_ring29.bin"},    // 37
+    {"sim_ring30.bin"},    // 38
+    {"sim_ring31.bin"},    // 39
+    {"sim_ring32.bin"},    // 40
+    {"sim_ring33.bin"},    // 41
+    {"sim_ring34.bin"},    // 42
+    {"sim_ring35.bin"},    // 43
+    {"sim_ring36.bin"},    // 44
+    {"sim_ring37.bin"},    // 45
+    {"sim_ring38.bin"},    // 46
+    {"sim_ring39.bin"},    // 47
+    {"sim_ring40.bin"},    // 48
+    {"sms_ring01.bin"},    // 49
+    {"sms_ring02.bin"},    // 50
+    {"sms_ring03.bin"},    // 51
+    {"sms_ring04.bin"},    // 52
+    {"sms_ring05.bin"},    // 53
+    {"sms_ring06.bin"},    // 54
+    {"sms_ring07.bin"},    // 55
+    {"sms_ring08.bin"},    // 56
+    {"sms_ring09.bin"},    // 57
+    {"sms_ring10.bin"},    // 58
+    {"sms_ring11.bin"},    // 59
+    {"sms_ring12.bin"},    // 60
+    {"sms_ring13.bin"},    // 61
+    {"sms_ring14.bin"},    // 62
+    {"sms_ring15.bin"},    // 63
+    {"sms_ring16.bin"},    // 64
+    {"sms_ring17.bin"},    // 65
+    {"sms_ring18.bin"},    // 66
+    {"sms_ring19.bin"},    // 67
+    {"sms_ring20.bin"},    // 68
+    {"sms_ring21.bin"},    // 69
+    {"sms_ring22.bin"},    // 70
+    {"sms_ring23.bin"},    // 71
+    {"sms_ring24.bin"},    // 72
+    {"sms_ring25.bin"},    // 73
+    {"sms_ring26.bin"},    // 74
+    {"sms_ring27.bin"},    // 75
+    {"sms_ring28.bin"},    // 76
+    {"sms_ring29.bin"},    // 77
+    {"sms_ring30.bin"},    // 78
+    {"sms_ring31.bin"},    // 79
+    {"sms_ring32.bin"},    // 80
+    {"soft_alarm.bin"},    // 81
 };
 
 struct aw8697_container *aw8697_rtp;
@@ -5164,7 +5062,7 @@ static ssize_t aw8697_waveform_index_store(struct device *dev, struct device_att
     aw8697_haptic_set_gain(aw8697, aw8697->gain);
     aw8697_haptic_set_bst_vol(aw8697, aw8697->vmax);
 
-    if (sscanf(buf, "%d", &databuf[0])) {
+    if (sscanf(buf, "%x", &databuf[0]) == 1) {
         pr_err("%s: waveform_index = %d\n", __FUNCTION__, databuf[0]);
         mutex_lock(&aw8697->lock);
         aw8697->seq[0] = (unsigned char)databuf[0];

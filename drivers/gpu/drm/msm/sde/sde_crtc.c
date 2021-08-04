@@ -3658,9 +3658,6 @@ static int sde_crtc_config_fingerprint_dim_layer(struct drm_crtc_state *crtc_sta
 		return 0;
 	}
 
-	if (chen_need_active_hbm_next_frame)
-		alpha = 0; // without dimlayer
-
 	if ((stage + SDE_STAGE_0) >= kms->catalog->mixer[0].sblk->maxblendstages) {
 		return -EINVAL;
 	}
@@ -5849,7 +5846,8 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 		is_exist_fp_icon = false;
 	}
 
-	dimlayer_hbm_is_single_layer = (cnt == 2 || (!is_exist_fp_icon && oneplus_dimlayer_hbm_enable)) ? 1 : 0;
+	//dimlayer_hbm_is_single_layer = (cnt == 2 || (!is_exist_fp_icon && oneplus_dimlayer_hbm_enable)) ? 1 : 0;
+	dimlayer_hbm_is_single_layer = cnt == 2;
 	
 	if (fppressed_index >= 0 || fp_index >= 0)
 		pr_err("Art_Chen: Check Fingerprint layer, reason: fp_index is %d, fppressed_index is %d aod_index is %d\n", fp_index, fppressed_index, aod_index);
@@ -5883,21 +5881,29 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 		}
     }
 
-	if (oneplus_dimlayer_hbm_enable && dimlayer_hbm_is_single_layer && fppressed_index == -1 && cnt > 0) {
-		fppressed_index = chen_need_active_hbm_next_frame ? 1 : -1;
-		cstate->fingerprint_pressed = fp_mode == 1;
+	if (oneplus_dimlayer_hbm_enable && fppressed_index == -1 && cnt > 0) {
+        if (chen_need_active_hbm_next_frame) {
+            if (!dimlayer_hbm_is_single_layer) {
+				int tempZPos = 0;
+				for (i = 0; i < cnt; i++) {
+					if (pstates[i].stage > tempZPos) {
+						tempZPos = pstates[i].stage;
+						fppressed_index = i;
+					}
+				}
+			} else {
+				fppressed_index = 1;
+			}
+            cstate->fingerprint_pressed = fp_mode == 1;
+        }
 	}
 
 	if (oneplus_dimlayer_hbm_enable || oneplus_force_screenfp || dim_backlight == 1) {
-		if (fp_index >= 0 && fppressed_index >= 0 && !chen_need_active_hbm_next_frame) {
+		if (fp_index >= 0 && fppressed_index >= 0) {
 			if (pstates[fp_index].stage >= pstates[fppressed_index].stage) {
 				SDE_ERROR("Bug!!@@@@: fp layer top of fppressed layer\n");
 				return -EINVAL;
 			}
-		} else if (fp_index != -1 && chen_need_active_hbm_next_frame) {
-			pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = oneplus_get_panel_brightness_to_alpha();
-			fp_index = -1;
-			pr_err("Art_Chen: Need fallback to fwb dimlayer, set fwb dimlayer alpha");
 		}
 		if (fppressed_index >= 0) {
 			if (zpos > pstates[fppressed_index].stage)
@@ -5906,15 +5912,9 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 		}
 
 		if (fp_index >= 0) {
-			if (!chen_need_active_hbm_next_frame || !dimlayer_hbm_is_single_layer) {
 				if (zpos > pstates[fp_index].stage)
 					zpos = pstates[fp_index].stage;
 				pstates[fp_index].stage++;
-			} else {
-				pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = oneplus_get_panel_brightness_to_alpha();
-				fp_index = -1;
-				pr_err("Art_Chen: Need fallback to fwb dimlayer, set fwb dimlayer alpha");
-			}
 		}
 		for (i = 0; i < cnt; i++) {
 			if (i == fp_index || i == fppressed_index)
@@ -5936,14 +5936,11 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 		else
 			cstate->fingerprint_mode = false;
 
-		if (fp_index >= 0)
-			pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
-
 		if (sde_crtc_config_fingerprint_dim_layer(&cstate->base, zpos)) {
 			//SDE_DEBUG("Failed to config dim layer\n");
 			return -EINVAL;
 		}
-		if (!chen_need_active_hbm_next_frame || !dimlayer_hbm_is_single_layer) {
+		if (!chen_need_active_hbm_next_frame) {
 			if (fppressed_index >= 0)
 				cstate->fingerprint_pressed = true;
 			else
