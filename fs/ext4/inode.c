@@ -39,6 +39,7 @@
 #include <linux/slab.h>
 #include <linux/bitops.h>
 #include <linux/iomap.h>
+#include <linux/file_map.h>
 
 #include "ext4_jbd2.h"
 #include "xattr.h"
@@ -4982,6 +4983,11 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
 	}
 	if (ret)
 		goto bad_inode;
+
+#ifdef CONFIG_FILE_MAP
+	inode->i_file_map = NULL;
+	file_map_entry_attach_unused(inode);
+#endif
 
 	if (S_ISREG(inode->i_mode)) {
 		inode->i_op = &ext4_file_inode_operations;
