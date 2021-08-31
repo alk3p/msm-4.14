@@ -17,7 +17,6 @@
 #include "xattr.h"
 
 #include <trace/events/f2fs.h>
-#include <linux/file_map.h>
 
 void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
 {
@@ -474,10 +473,6 @@ static int do_read_inode(struct inode *inode)
 	stat_inc_compr_inode(inode);
 	stat_add_compr_blocks(inode, atomic_read(&fi->i_compr_blocks));
 
-#ifdef CONFIG_FILE_MAP
-	inode->i_file_map = NULL;
-	file_map_entry_attach_unused(inode);
-#endif
 	return 0;
 }
 
